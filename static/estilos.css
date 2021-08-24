@@ -1,0 +1,39 @@
+/*
+generales
+*/
+body {
+    background-color: black;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+.grisc{
+    color:grey;
+}
+.blanco{
+    color:white;
+}
+.diez{
+    font-size: 10px;
+}
+.titulo1{
+    font-weight: bold;
+    font-size:16px;
+}
+
+/*
+login
+*/
+#login{
+    position:absolute;
+    top:20%;
+    
+}
+
+/*
+Ingreso
+*/
+#formIngreso{
+    /*position:absolute;
+    top:20%;*/
+}
+

@@ -1,0 +1,49 @@
+{% extends 'menuTemplate.html' %}
+{% block content %}    
+<br><br>
+    <div class="container">
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header">Zonas</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                Nombre zona <input type="text" id="zona" name=zona" class="form-control">
+                            </div>
+                            
+                            <div class="col-2">
+                                <button class="btn btn-primary">Crear</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <br><br>
+                <table class="table table-bordered table-stripped table-sm">
+                    <thead>
+                        <tr class="table-warning">
+                            <th>Id</th>
+                            <th>Zona</th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                        {% for zona in zonas %}
+                          <tr  class="table-default">
+                            <td>{{zona[0]}}</td>
+                            <td>{{zona[1]}}</td>
+                            <td><button class="btn btn-warning btn-sm" > <i class="fa fa-fw fa-pencil"></i></button></td>
+                            <td><button class="btn btn-danger btn-sm" > <i class="fa fa-fw fa-trash"></i></button></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                <br><br>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

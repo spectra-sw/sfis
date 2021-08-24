@@ -1,0 +1,57 @@
+{% extends 'menuTemplate.html' %}
+{% block content %}    
+<br><br>
+    <div class="container">
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header">Filtro de búsqueda</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                Fecha inicio <input type="date" id="f1" name="f1" class="form-control">
+                            </div>
+                            <div class="col-5">
+                                Fecha fin <input type="date" id="f2" name="f2" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-primary">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <br><br>
+                <table class="table table-bordered table-stripped table-sm">
+                    <thead>
+                        <tr class="table-warning">
+                            <th>Visitante</th>
+                            <th>Fecha</th>
+                            <th>Destino</th>
+                            <th>Contacto</th>
+                            <th>Motivo</th>
+                            <th></th
+                          </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingreso in ingresos %}
+                          <tr  class="table-default">
+                            <td>{{ingreso[1]}}</td>
+                            <td>{{ingreso[2]}}</td>
+                            <td>{{ingreso[3]}}</td>
+                            <td>{{ingreso[4]}}</td>
+                            <td><button class="btn btn-primary btn-sm" > <i class="fa fa-fw fa-bookmark"></i></button></td>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                <br><br>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

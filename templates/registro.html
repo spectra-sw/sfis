@@ -1,0 +1,273 @@
+
+<!doctype html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Spectra - Registro</title>
+
+    <style id="custom-logo-css">
+        .site-title,
+        .site-description {
+            position: absolute;
+            clip: rect(1px, 1px, 1px, 1px);
+        }
+    </style>
+    <link rel="icon" href="https://www.spectra.com.co/wp-content/uploads/2020/05/cropped-Logo-Spectra-2-32x32.png"
+        sizes="32x32">
+    <link rel="icon" href="https://www.spectra.com.co/wp-content/uploads/2020/05/cropped-Logo-Spectra-2-192x192.png"
+        sizes="192x192">
+    <link rel="apple-touch-icon"
+        href="https://www.spectra.com.co/wp-content/uploads/2020/05/cropped-Logo-Spectra-2-180x180.png">
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <!-- JQuery links  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <header class="container-fluid pt-3">
+        <div class="row page-header">
+            <div class="col-1"></div>
+            <div class="col-">
+                <p style="float: left; border-left: 20px;">
+                    <img width="180" src="/static/src/Logo-Spectra.png" class="custom-logo" alt="Spectra Ingeniería">
+                </p>
+            </div>
+
+            <div class="col- col-sm-1"></div>
+            <div class="col my-auto">
+                <h2>
+                    <p style="text-align:right; font-family:Roboto,sans-serif; float: right;">
+                        <b>
+                            Spectra - CELSIA
+                        </b>
+                    </p>
+                </h2>
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </header>
+
+    <hr noshade style="border-color: rgb(30, 115, 190); width:95%; height: 1.5px; background-color: rgb(24, 91, 150);">
+
+    <div class="container">
+
+        <h1>
+            <p style="font-family:Roboto,sans-serif;text-align:center">
+                <b>
+                    Registro de Usuario
+                </b>
+            </p>
+        </h1>
+        
+        <div class="row text-center">            
+
+            <div class="col">
+
+                <div class="bg-light">
+                    <h3>
+                        <p style="font-family:Roboto,sans-serif;">
+                            <b>
+                                Datos e Información
+                            </b>
+                        </p>
+                    </h3>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <input type="text" id="name" class="form-control" placeholder="Nombres"
+                                required="required">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="surname" class="form-control" placeholder="Apellidos"
+                                required="required">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="id" class="form-control" placeholder="Número de Indentificación (C.C, C.E, ...)"
+                                required="required">
+                        </div>       
+
+                        <div class="row">                                
+                            <div class="col">
+                                <p>Permiso de acceso</p>
+                            </div>
+                            <div class="col">
+                                <input type="radio" id="Si" name="acceso" value="1"
+                                        checked>
+                                <label for="Si">Si</label>
+                            </div>                                
+                            <div class="col">
+                                <input type="radio" id="No" name="acceso" value="0">
+                                <label for="No">No</label>
+                            </div>                                
+                        </div>                        
+
+                        <div class="output">
+                            <img id="photo" class="img-fluid">
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <button type="submit" onclick="sendPost()" class="btn btn-primary btn-lg btn-block">Registrarse</button>
+                        </div>
+                        <div class="clearfix">
+                            <p class="text-center"><a href="#">¿Problemas en el Registro?</a></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="contentarea">
+                    <h4>
+                        Captura de Fotografía
+                    </h4>
+                    <br>
+                    <div class="camera">
+                        <video id="video" class="img-fluid">Video no disponible</video>
+                    </div>
+                    <br>
+                    <div>
+                        <button id="startbutton" type="button" class="btn btn-secondary btn-lg btn-block">
+                            Capturar Fotografía
+                        </button>
+                    </div>
+                    <canvas hidden id="canvas"></canvas>
+                    <br>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="text-center">
+            <a href="/">
+                <button type="button" id="volver" class="btn btn-primary btn-lg">Volver</button>
+            </a>
+        </div> -->
+
+
+    </div>
+    <br>
+
+
+
+    <script>
+        (function () {
+
+            var width = 1280; // We will scale the photo width to this
+            var height = 0; // This will be computed based on the input stream
+
+            var streaming = false;
+
+            var video = null;
+            var canvas = null;
+            var photo = null;
+            var startbutton = null;
+
+            function startup() {
+                video = document.getElementById('video');
+                canvas = document.getElementById('canvas');
+                photo = document.getElementById('photo');
+                startbutton = document.getElementById('startbutton');
+
+                navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(function (err) {
+                        console.log("An error occurred: " + err);
+                    });
+
+                video.addEventListener('canplay', function (ev) {
+                    if (!streaming) {
+                        height = video.videoHeight / (video.videoWidth / width);
+
+                        if (isNaN(height)) {
+                            height = width / (4 / 3);
+                        }
+
+                        video.setAttribute('width', width);
+                        video.setAttribute('height', height);
+                        canvas.setAttribute('width', width);
+                        canvas.setAttribute('height', height);
+                        streaming = true;
+                    }
+                }, false);
+
+                startbutton.addEventListener('click', function (ev) {
+                    takepicture();
+                    ev.preventDefault();
+                }, false);
+
+                clearphoto();
+            }
+
+
+            function clearphoto() {
+                var context = canvas.getContext('2d');
+                context.fillStyle = "#AAA";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                var data = canvas.toDataURL('image/png');
+                photo.setAttribute('src', data);
+            }
+
+            function takepicture() {
+                var context = canvas.getContext('2d');
+                if (width && height) {
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(video, 0, 0, width, height);
+
+                    var data = canvas.toDataURL('image/png');
+                    photo.setAttribute('src', data);
+                } else {
+                    clearphoto();
+                }
+            }
+
+            window.addEventListener('load', startup, false);
+        })();
+
+        function sendPost() {                  
+
+            var postData = {
+            name: $("#name").val(),
+            surname: $("#surname").val(),
+            id: $("#id").val(),
+            permission: $("input[name='acceso']:checked").val(),
+            photo: $('#photo').prop('src')
+            }
+
+            $.ajax({
+                url: "/register",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(postData),
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+                                
+	    };
+    </script>
+</body>
+
+</html>

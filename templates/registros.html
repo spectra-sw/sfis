@@ -1,0 +1,23 @@
+<table class="table table-bordered table-sm">
+<thead>
+    <tr class="table-warning">
+        <th>Fecha</th>
+        <th>Nombre</th>
+        <th>Camara</th>
+        <th>Score</th>
+        <th></th
+      </tr>
+</thead>
+<tbody>
+    {% for registro in registros %}
+      <tr  class="{{registro['clase']}}">
+        <td>{{registro['title_date']}}</td>
+        <td>{{registro['title_name']}}</td>
+        <td>{{registro['title_idcam']}}</td>
+        <td>{{registro['title_score']}}</td>
+        <td><button class="btn btn-primary btn-sm" > <i class="fa fa-fw fa-bookmark"></i></button></td>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
