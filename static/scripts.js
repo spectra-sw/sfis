@@ -1,6 +1,9 @@
 function menu(){
     window.open('/menu','_self');
 }
+function inicio(){
+    window.open('/inicio','_self');
+}
 function iniciar(){
   
         url = '/activity/get'
@@ -22,6 +25,15 @@ function iniciar(){
         
  
 }
-function saludo(){
-    alert("ghgfhvnbfvhgnbgbhgyuhjiy7ui")
+function detalleA(id){
+    url = '/activity/get/'+id
+        $.ajax({
+                url: url,
+                type:'GET',
+                success: function(data) {
+                    $("#detalleA").html(data);
+                    $("#detalleA").modal();
+                }
+        }); 
+   
 }

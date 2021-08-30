@@ -30,6 +30,7 @@
                     <thead>
                         <tr class="table-warning">
                             <th>Visitante</th>
+                            <th>Foto</th>
                             <th>Fecha</th>
                             <th>Destino</th>
                             <th>Contacto</th>
@@ -41,11 +42,13 @@
                         {% for ingreso in ingresos %}
                           <tr  class="table-default">
                             <td>{{ingreso[1]}}</td>
+                            <td><img src="{{ url_for('static', filename='users/'+ingreso[6]) }}" width="100px"></td>
                             <td>{{ingreso[2]}}</td>
                             <td>{{ingreso[3]}}</td>
                             <td>{{ingreso[4]}}</td>
+                            <td>{{ingreso[5]}}</td>
                             <td><button class="btn btn-primary btn-sm" > <i class="fa fa-fw fa-bookmark"></i></button></td>
-                            </td>
+                           
                           </tr>
                         {% endfor %}
                       </tbody>

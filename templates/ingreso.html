@@ -142,7 +142,7 @@
                                 <video id="video2" class="img-fluid">Video no disponible</video>
                             </div>
                             <div class="card-body">
-                              <h4 class="card-title">Imagen lateral</h4>
+                              <h4 class="card-title">Imagen lateral 1</h4>
                               <p class="card-text">Ubiquese de manera lateral de lado izquierdo</p>
                               <button id="laterali" class="btn btn-primary">Capturar</button>
                               <canvas hidden id="canvas2"></canvas>
@@ -160,7 +160,7 @@
                                 <video id="video3" class="img-fluid">Video no disponible</video>
                             </div>
                             <div class="card-body">
-                              <h4 class="card-title">Imagen frontal</h4>
+                              <h4 class="card-title">Imagen lateral 2</h4>
                               <p class="card-text">Ubiquese de manera lateral de lado derecho</p>
                               <button id="laterald" class="btn btn-primary">Capturar</button>
                               <canvas hidden id="canvas3"></canvas>
@@ -212,7 +212,35 @@
             laterali = document.getElementById('laterali');
             laterald = document.getElementById('laterald');
 
-            navigator.mediaDevices.getUserMedia({
+            navigator.getMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia);
+
+        navigator.getMedia (
+
+        // Restricciones (contraints) *Requerido
+        {
+            video: true,
+            audio: false
+        },
+
+        // Funcion de finalizacion (Succes-Callback) *Requerido
+        function(localMediaStream) {
+            video.srcObject = localMediaStream;
+                    video.play();
+                    video2.srcObject = localMediaStream;
+                    video2.play();
+                    video3.srcObject = localMediaStream;
+                    video3.play();
+        },
+
+        // errorCallback *Opcional
+        function(err) {
+            console.log("Ocurrió el siguiente error: " + err);
+        }
+
+        );
+           /*navigator.mediaDevices.getUserMedia({
                 video: true,
                 audio: false
             })
@@ -227,7 +255,7 @@
                 .catch(function (err) {
                     console.log("An error occurred: " + err);
                 });
-
+            */
             video.addEventListener('canplay', function (ev) {
                 if (!streaming) {
                     height = video.videoHeight / (video.videoWidth / width);

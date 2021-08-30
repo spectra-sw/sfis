@@ -11,3 +11,13 @@ def getZonas(db):
         zonas.append(row)
 
     return zonas     
+
+def getZona(db,id):
+    query ="select nombre from zonas where id ="+str(id)
+    sql = text(query)
+    result = db.engine.execute(sql)
+    nombre=""
+    for row in result:
+        nombre = row[0]
+    print(nombre)
+    return nombre     

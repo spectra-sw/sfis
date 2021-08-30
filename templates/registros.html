@@ -3,7 +3,7 @@
     <tr class="table-warning">
         <th>Fecha</th>
         <th>Nombre</th>
-        <th>Camara</th>
+        <th>Cámara</th>
         <th>Score</th>
         <th></th
       </tr>
@@ -15,7 +15,7 @@
         <td>{{registro['title_name']}}</td>
         <td>{{registro['title_idcam']}}</td>
         <td>{{registro['title_score']}}</td>
-        <td><button class="btn btn-primary btn-sm" > <i class="fa fa-fw fa-bookmark"></i></button></td>
+        <td><button class="btn btn-primary btn-sm"  id ="{{loop.index0 }}" onclick="detalleA(this.id)" > <i class="fa fa-fw fa-bookmark"></i></button></td>
         </td>
       </tr>
     {% endfor %}

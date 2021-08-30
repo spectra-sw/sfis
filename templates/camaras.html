@@ -1,0 +1,64 @@
+{% extends 'menuTemplate.html' %}
+{% block content %}    
+<br><br>
+    <div class="container">
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <div class="row">
+                            
+                            
+                            <div class="col-2">
+                                <button class="btn btn-primary">Crear Cámara</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <br><br>
+                <table class="table table-bordered table-stripped table-sm table-responsive" style="font-weight: 10px;">
+                    <thead>
+                        <tr class="table-success">
+                            <th>Nombre</th>
+                            <th>Referencia</th>
+                            <th>Marca</th>
+                            <th>Fps</th>
+                            <th>IP</th>
+                            <th>Zona</th>
+                            <th>Puerto</th>
+                            <th>Link</th>
+                            <th>Usuario</th>
+                            <th>Password</th>
+                            <th></th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                        {% for camara in camaras %}
+                          <tr  class="table-default">
+                            <td>{{camara[1]}}</td>
+                            <td>{{camara[2]}}</td>
+                            <td>{{camara[3]}}</td>
+                            <td>{{camara[4]}}</td>
+                            <td>{{camara[5]}}</td>
+                            <td>{{camara[6]}}</td>
+                            <td>{{camara[7]}}</td>
+                            <td>{{camara[8]}}</td>
+                            <td>{{camara[9]}}</td>
+                            <td>{{camara[10]}}</td>
+                            <td><button class="btn btn-warning btn-sm" > <i class="fa fa-fw fa-pencil"></i></button></td>
+                            <td><button class="btn btn-danger btn-sm" > <i class="fa fa-fw fa-trash"></i></button></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                <br><br>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
