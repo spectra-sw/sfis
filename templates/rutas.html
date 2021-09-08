@@ -1,0 +1,121 @@
+{% extends 'menuTemplate.html' %}
+{% block content %}    
+<br><br>
+    <div class="container">
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header">Rutas</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre ruta </label>
+                                    <input type="text" class="form-control" placeholder="" id="nombrer" name="nombrer">
+                                </div>
+                           </div>
+                           <div class="col-3">
+                                <div class="form-group">
+                                    <label for="nombre">Origen </label>
+                                    <select class="form-control" id="destino" name="destino">
+                                    <option value=""></option>
+                                    {% for zona in zonas %}
+                                        <option value="{{ zona[0]}}">{{ zona[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="nombre">Destino </label>
+                                    <select class="form-control" id="destino" name="destino">
+                                    <option value=""></option>
+                                    {% for zona in zonas %}
+                                        <option value="{{ zona[0]}}">{{ zona[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-primary">Crear</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <p><strong>RUTA: </strong>RECEPCIÓN-GERENCIA </p>
+                <p><button class="btn btn-primary btn-sm">+ NODO</button></p>
+                <canvas id="ruta1" width="1000"></canvas>
+            </div>
+        </div>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <p><strong>RUTA: </strong>RECEPCIÓN-MANTENIMIENTO</p>
+                <p><button class="btn btn-primary btn-sm">+ NODO</button></p>
+                <canvas id="ruta2" width="1000"></canvas>
+            </div>
+        </div>
+<script>
+ruta1();
+ruta2();
+function ruta1(){   
+    var canvas = document.getElementById("ruta1");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+ 
+        circulo(ctx,200,50,40,'red',"RECEPCIÓN",30);
+        circulo(ctx,400,50,40,'yellow',"P2-Escaleras",25);
+        circulo(ctx,600,50,40,'yellow',"P3-Pasillo\nGerencias",30);
+        circulo(ctx,800,50,40,'red',"GERENCIA",25);
+
+        linea(ctx,240,50,360,50);
+        linea(ctx,440,50,560,50);
+        linea(ctx,640,50,760,50);
+    }
+ 
+}
+function ruta2(){   
+    var canvas = document.getElementById("ruta2");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+ 
+        circulo(ctx,200,50,40,'red',"RECEPCIÓN",30);
+        circulo(ctx,400,50,40,'yellow',"P2-Escaleras",25);
+        circulo(ctx,600,50,40,'red',"MTO",10);
+
+        linea(ctx,240,50,360,50);
+        linea(ctx,440,50,560,50);
+        
+    }
+ 
+}
+function circulo(ctx,x,y,r,color,texto,offset){
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "black";
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath(); 
+    ctx.beginPath();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "black";
+    ctx.fillText(texto, x-offset, y,60);
+    ctx.fill();
+ ctx.closePath(); 
+}
+function linea(ctx,x,y,x2,y2){
+    ctx.beginPath();
+    ctx.lineCap = "round";
+    ctx.moveTo(x, y);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+</script>
+        </div>
+    </div>
+    {% endblock %}

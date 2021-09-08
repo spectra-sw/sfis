@@ -4,7 +4,7 @@ generales
 body {
     background-color: black;
     font-family: 'Courier New', Courier, monospace;
-    
+    font-size: 12px;
 }
 .grisc{
     color:grey;
@@ -36,4 +36,6 @@ Ingreso
     /*position:absolute;
     top:20%;*/
 }
-
+.form-control{
+    font-size:12px;
+}

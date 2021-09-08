@@ -46,39 +46,41 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">  
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label for="nombre">Nombres y apellidos completos</label>
-                                <input type="nombre" class="form-control" placeholder="" id="nombre" name="nombre">
+                    <div id="datosp">
+                        <div class="row">  
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="nombre">Nombres y apellidos completos</label>
+                                    <input type="nombre" class="form-control" placeholder="" id="nombre" name="nombre" onclick="buscarp()">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="empresa">Empresa</label>
+                                    <input type="empresa" class="form-control" placeholder="" id="empresa" name="empresa">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label for="empresa">Empresa</label>
-                                <input type="empresa" class="form-control" placeholder="" id="empresa" name="empresa">
+                        <div class="row">  
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="nombre">Correo electrónico</label>
+                                    <input type="email" class="form-control" placeholder="" id="correo" name="correo">
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">  
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label for="nombre">Correo electrónico</label>
-                                <input type="email" class="form-control" placeholder="" id="correo" name="correo">
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label for="telefono">Número de contacto</label>
-                                <input type="text" class="form-control" placeholder="" id="telefono" name="telefono">
-                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="telefono">Número de contacto</label>
+                                    <input type="text" class="form-control" placeholder="" id="telefono" name="telefono">
+                                </div>
 
+                            </div>
                         </div>
                     </div>
                     <div class="row">  
                         <div class="col-12 col-sm-6">
                             <div class="form-group">
-                                <label for="tipo">Destino</label>
+                                <label for="tipo">Origen</label>
                                 <select class="form-control" id="destino" name="destino">
                                     <option value=""></option>
                                     {% for zona in zonas %}
@@ -87,6 +89,20 @@
                                 </select>
                             </div> 
                         </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="tipo">Detino</label>
+                                <select class="form-control" id="destino" name="destino">
+                                    <option value=""></option>
+                                    {% for zona in zonas %}
+                                        <option value="{{ zona[0]}}">{{ zona[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row">  
                         <div class="col-12 col-sm-6">
                             <div class="form-group">
                                 <label for="contacto">Contacto Destino</label>
@@ -125,7 +141,7 @@
                             </div>
                             <div class="card-body">
                               <h4 class="card-title">Imagen frontal</h4>
-                              <p class="card-text">Ubiquese de manera frontal en la cámara</p>
+                              <p class="card-text">Ubíquese de manera frontal en la cámara</p>
                               <button id="frontal" class="btn btn-primary">Capturar</button>
                               <canvas hidden id="canvas"></canvas>
                               <div class="output">
@@ -143,7 +159,7 @@
                             </div>
                             <div class="card-body">
                               <h4 class="card-title">Imagen lateral 1</h4>
-                              <p class="card-text">Ubiquese de manera lateral de lado izquierdo</p>
+                              <p class="card-text">Ubíquese de manera lateral de lado izquierdo</p>
                               <button id="laterali" class="btn btn-primary">Capturar</button>
                               <canvas hidden id="canvas2"></canvas>
                               <div class="output">
@@ -161,7 +177,7 @@
                             </div>
                             <div class="card-body">
                               <h4 class="card-title">Imagen lateral 2</h4>
-                              <p class="card-text">Ubiquese de manera lateral de lado derecho</p>
+                              <p class="card-text">Ubíquese de manera lateral de lado derecho</p>
                               <button id="laterald" class="btn btn-primary">Capturar</button>
                               <canvas hidden id="canvas3"></canvas>
                               <div class="output">

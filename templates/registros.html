@@ -14,7 +14,11 @@
         <td>{{registro['title_date']}}</td>
         <td>{{registro['title_name']}}</td>
         <td>{{registro['title_idcam']}}</td>
+        {% if registro['title_score'] < 50  %}
+        <td>- 50%</td>
+        {% else %}
         <td>{{registro['title_score']}}</td>
+        {% endif %}
         <td><button class="btn btn-primary btn-sm"  id ="{{loop.index0 }}" onclick="detalleA(this.id)" > <i class="fa fa-fw fa-bookmark"></i></button></td>
         </td>
       </tr>
