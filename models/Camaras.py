@@ -65,9 +65,9 @@ def activar(server,id,db):
     parser.add_argument('--source', type=None, default=None)
     parser.add_argument('--frame', type=int, default=10)
     parser.add_argument('--urlservices', type=str, default='')
-    parser.add_argument('--timeml', type=float, default=0.5)
-    parser.add_argument('--indexread', type=str, default='')
-    parser.add_argument('--indexwrite', type=str, default='')
+    parser.add_argument('--timeml', type=float, default=1.0)
+    parser.add_argument('--indexread', type=str, default='facencoding')
+    parser.add_argument('--indexwrite', type=str, default='activity')
     parser.add_argument('--namespace', type=str, default='serve')
     parser.add_argument('--nreplica', type=int, default=1)
     parser.add_argument('--address', type=str, default='auto')
@@ -75,17 +75,20 @@ def activar(server,id,db):
     parser.add_argument('--port', type=int, default=9200)
     parser.add_argument('--sizeread', type=int, default=1)
     parser.add_argument('--sizeface', type=int, default=25)
-    parser.add_argument('--thr', type=float, default=85.0)
+    parser.add_argument('--thr', type=float, default=0.85)
     parser.add_argument('--thrperson', type=float, default=50.0)
     parser.add_argument('--thrminperson', type=float, default=40.0)
     parser.add_argument('--remove', type=bool, default=False)
     parser.add_argument('--add', type=bool, default=False)
     args = parser.parse_args()
+    
     # json -----------------------------------------------------------------------------------
-    params = {"idc": args.id, "thr": args.thr, "size": args.sizeface, "indexread": args.indexread,
+    params = {"idc": camara[0][11],"timeml":args.timeml, "frame": args.frame ,"thr": args.thr, "sizeface": args.sizeface, "indexread": args.indexread,
             "indexwrite": args.indexwrite, "host": args.hostname, "port": args.port,
-            "sizeread": args.sizeread, "thrperson": args.thrperson,
-            "thrminperson": args.thrminperson, "cam": camara[0][8], 'uuid': camara[0][11]
+            "sizeread": args.sizeread, "thrperson": args.thrperson, "namespace": args.namespace,
+            "nreplica":args.nreplica,
+            "thrminperson": args.thrminperson, "cam": camara[0][8], 'uuid': camara[0][11],
+            "action" : "add"
             }
     print(params)
     params = json.dumps(params).encode('utf-8')
@@ -98,7 +101,7 @@ def activar(server,id,db):
                 return await Respuesta.json()
 
   
-    url = server + 'INITSERVE'
+    url = server + 'HARDWARE'
     
     datas = FormData()
     datas.add_field('annotations', params, filename='annotations.json', content_type='application/json')

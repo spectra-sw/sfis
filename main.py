@@ -35,13 +35,13 @@ CONFIG DATA
 """
 
 #server='http://192.168.1.30:5000/'
-server='http://7b9c-190-147-196-18.ngrok.io/'
+server='http://30cd-190-147-196-18.ngrok.io/'
 ENV = 'dev'
 if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:80085700@localhost:5432/sfis"
     
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://kypjuimrppxber:789b0622e2c424a26fbb46ec4da0347904b0c8c9caf204543bc0bcc835b553d3@ec2-107-22-7-9.compute-1.amazonaws.com:5432/dau09psmsu0vp7"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:5p3ctr4-21@localhost:5432/sfis"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
