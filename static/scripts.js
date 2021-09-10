@@ -57,9 +57,12 @@ function buscarp(){
 
        
 }
-function activarCamara(id){
+function camara(id,accion){
     url = '/activarcamara'
-    datos ={ id:id}
+    parametros = $( "#parametros" ).serialize(); 
+    
+    datos ={ id:id, parametros:parametros, accion: accion}
+    console.log(datos)
         $.ajax({
                 url: url,
                 data: datos,

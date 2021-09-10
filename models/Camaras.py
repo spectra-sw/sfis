@@ -57,9 +57,23 @@ def guardarCamara(datos,db):
     sql = text(query)
     result = db.engine.execute(sql)
 
-def activar(server,id,db):
+def activar(server,id,db,parametros,accion):
+    parametros=parametros.split("&")
+    dictp={}
+    for p in parametros:
+        d = p.split("=")
+        dictp[d[0]]=float(d[1])
+    
+    print(dictp)
+    print(accion)
+    if accion =="1":
+        action ="add"
+    if accion == "0":
+        action="remove"
+
     camara = getCamaraById(id,db)
     #print(camara)
+    
     parser = argparse.ArgumentParser(description="Setting")
     parser.add_argument('--id', type=str, default='')
     parser.add_argument('--source', type=None, default=None)
@@ -82,13 +96,14 @@ def activar(server,id,db):
     parser.add_argument('--add', type=bool, default=False)
     args = parser.parse_args()
     
+    
     # json -----------------------------------------------------------------------------------
-    params = {"idc": camara[0][11],"timeml":args.timeml, "frame": args.frame ,"thr": args.thr, "sizeface": args.sizeface, "indexread": args.indexread,
+    params = {"idc": camara[0][11],"timeml":dictp["timeml"], "frame": camara[0][4] ,"thr": dictp["thr"], "sizeface": dictp["sizeface"], "indexread": args.indexread,
             "indexwrite": args.indexwrite, "host": args.hostname, "port": args.port,
-            "sizeread": args.sizeread, "thrperson": args.thrperson, "namespace": args.namespace,
-            "nreplica":args.nreplica,
-            "thrminperson": args.thrminperson, "cam": camara[0][8], 'uuid': camara[0][11],
-            "action" : "add"
+            "sizeread": dictp["sizeread"], "thrperson": dictp["thrperson"], "namespace": args.namespace,
+            "nreplica":dictp["nreplica"],
+            "thrminperson": dictp["thrminperson"], "cam": camara[0][8], 'uuid': camara[0][11],
+            "action" : action
             }
     print(params)
     params = json.dumps(params).encode('utf-8')

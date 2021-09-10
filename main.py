@@ -161,13 +161,16 @@ def activity():
             r['clase'] = "table-danger"
         if r['title_authorization']==True:
             r['clase'] = "table-success"
+
+        '''
         filePhoto= 'static/activity/'+ r['title_uuid']+'.jpg'
         r['foto'] = r['title_uuid']+'.jpg'
-        jpg_original = base64.b64decode(r['title_imagen'])
+        #jpg_original = base64.b64decode(r['title_imagen'])
+        
         
         with open(filePhoto, 'wb') as f_output:
             f_output.write(jpg_original)
-        
+        '''
     
     return render_template('registros.html', registros= registros)
 
@@ -233,7 +236,10 @@ def buscarp():
 def activarcamara():  
     if request.method == 'POST':
         id= request.form['id']  
-        activar(server,id,db)    
+        parametros=request.form['parametros'] 
+        accion =request.form['accion'] 
+        #print(parametros) 
+        activar(server,id,db,parametros,accion)    
 
         return str(id)    
 
@@ -359,7 +365,7 @@ def pruebafiltro():
     print("Max"+fmax)
     
     
-    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20}
+    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20, "search":"FECHA"}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
 
