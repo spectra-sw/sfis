@@ -34,9 +34,9 @@ app = Flask(__name__)
 CONFIG DATA
 """
 
-#server='http://192.168.1.30:5000/'
-server='http://30cd-190-147-196-18.ngrok.io/'
-ENV = 'dev'
+server='http://192.168.1.30:5000/'
+#server='http://30cd-190-147-196-18.ngrok.io/'
+ENV = 'prod'
 if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:80085700@localhost:5432/sfis"
     
@@ -388,5 +388,5 @@ def pruebafiltro():
     
 
 if __name__=="__main__":
-    app.run(host='192.168.20.25',debug=True)
+    app.run(host='192.168.1.30',port="5001",debug=True)
     

@@ -98,10 +98,10 @@ def activar(server,id,db,parametros,accion):
     
     
     # json -----------------------------------------------------------------------------------
-    params = {"idc": camara[0][11],"timeml":dictp["timeml"], "frame": camara[0][4] ,"thr": dictp["thr"], "sizeface": dictp["sizeface"], "indexread": args.indexread,
+    params = {"idc": camara[0][11],"timeml":dictp["timeml"], "frame":int(camara[0][4]) ,"thr": dictp["thr"], "sizeface": int(dictp["sizeface"]), "indexread": args.indexread,
             "indexwrite": args.indexwrite, "host": args.hostname, "port": args.port,
-            "sizeread": dictp["sizeread"], "thrperson": dictp["thrperson"], "namespace": args.namespace,
-            "nreplica":dictp["nreplica"],
+            "sizeread": int(dictp["sizeread"]), "thrperson": dictp["thrperson"], "namespace": args.namespace,
+            "nreplica":int(dictp["nreplica"]),
             "thrminperson": dictp["thrminperson"], "cam": camara[0][8], 'uuid': camara[0][11],
             "action" : action
             }
