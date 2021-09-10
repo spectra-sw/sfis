@@ -161,7 +161,9 @@ def activity():
             r['clase'] = "table-danger"
         if r['title_authorization']==True:
             r['clase'] = "table-success"
-
+        
+        r['foto'] = r['title_face_uuid']
+        print(r['foto'])
         '''
         filePhoto= 'static/activity/'+ r['title_uuid']+'.jpg'
         r['foto'] = r['title_uuid']+'.jpg'
