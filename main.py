@@ -163,6 +163,7 @@ def activity():
             r['clase'] = "table-success"
         
         r['foto'] = r['title_face_uuid']
+        r['env'] = r['title_imagen_uuid']
         #print(r['foto'])
         '''
         filePhoto= 'static/activity/'+ r['title_uuid']+'.jpg'
