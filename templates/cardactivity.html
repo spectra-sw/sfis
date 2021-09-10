@@ -12,7 +12,7 @@
         <div class="modal-body">
             <div class="card" style="width:400px">
                 <img class="card-img-top img-fluid" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:60%">
-                <img class="card-img-top img-fluid" src="{{ url_for('static', filename='activity/'+dato['env']) }}" alt="Card image" style="width:60%">
+                <img class="card-img-top img-fluid" src="{{ url_for('static', filename='activity/environment/'+dato['env']) }}" alt="Card image" style="width:60%">
                 <div class="card-body">
                   <h4 class="card-title">{{dato['title_name'] }}</h4>
                   <p class="card-text">
