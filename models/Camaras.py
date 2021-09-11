@@ -9,6 +9,8 @@ from aiohttp import FormData
 import json
 from utils.functions import maxId
 import shortuuid
+import base64
+from subprocess import check_output
 
 nest_asyncio.apply()
 
@@ -67,9 +69,9 @@ def activar(server,id,db,parametros,accion):
     print(dictp)
     print(accion)
     if accion =="1":
-        action ="add"
+        action = "add"
     if accion == "0":
-        action="remove"
+        action= "remove"
 
     camara = getCamaraById(id,db)
     #print(camara)
@@ -106,27 +108,45 @@ def activar(server,id,db,parametros,accion):
             "action" : action
             }
     print(params)
-    params = json.dumps(params).encode('utf-8')
 
-    async def querysyncro(urls, files): 
-        connector = aiohttp.TCPConnector(limit= None)    
-        async with aiohttp.ClientSession(connector= connector) as session:        
-            async with session.post(url= urls, data= files) as Respuesta:
-                #print(await Respuesta.text()) 
-                return await Respuesta.json()
 
-  
-    url = server + 'HARDWARE'
+    uid             = params['idc']
+    # CODE link Streaming
+    cam = params['cam']
+    cam = cam.encode('ascii')
+    cam = base64.b64encode(cam)
+    cam = cam.decode('ascii')
+    # -------------------
+    source          = cam
+    frame           = params['frame']
+    urlservices     = "http://127.0.0.1:5000/FACE_INTEGRATION"
+    timeml          = params['timeml']
+    indexread       = params['indexread']
+    indexwrite      = params['indexwrite']
+    namespace       = params['namespace']
+    nreplica        = params['nreplica']
+    address         = "auto"
+    hostname        = "localhost"
+    port            = params['port']
+    sizeread        = params['sizeread']
+    sizeface        = params['sizeface']
+    thr             = params['thr']
+    thrperson       = params['thrperson']
+    thrminperson    = params['thrminperson']
+    action          = params['action']
     
-    datas = FormData()
-    datas.add_field('annotations', params, filename='annotations.json', content_type='application/json')
-    #SEND_> Solicitud Asincrona.
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    task = querysyncro(url, datas)
-    resp = loop.run_until_complete(task)
-    #print(resp)
-    return resp  
+    try:
+        if  "add" in action:            
+            commandadd = 'python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --add '+str(True)
+            DATA = check_output(commandadd, shell=True).decode('utf-8')
+        elif "remove" in action:
+            commandadd = 'python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --remove '+str(True)
+            DATA = check_output(commandadd, shell=True).decode('utf-8')
+    except:
+        DATA = 'CHECK SERVER'
+    
+    print("DATA: ", DATA)
+    return DATA#resp  
 
     
 

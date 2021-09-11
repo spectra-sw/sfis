@@ -17,6 +17,7 @@ import uuid
 import aiohttp
 import asyncio
 import nest_asyncio
+from subprocess import check_output
 from datetime import datetime, timedelta
 nest_asyncio.apply()
 
@@ -34,7 +35,7 @@ app = Flask(__name__)
 CONFIG DATA
 """
 
-server='http://192.168.1.30:5000/'
+server='http://192.168.1.30:5100/'
 #server='http://30cd-190-147-196-18.ngrok.io/'
 ENV = 'prod'
 if ENV == 'dev':
@@ -307,27 +308,20 @@ def initserver():
         config = {"STATUS": 'START'}
     if status == "0":
         config = {"STATUS": 'STOP'}
-    
-    async def querysyncro(urls, files): 
-        connector = aiohttp.TCPConnector(limit= None)    
-        async with aiohttp.ClientSession(connector= connector) as session:        
-            async with session.post(url= urls, data= files) as Respuesta:
-                #print(await Respuesta.text()) 
-                return await Respuesta.json()
 
-    from aiohttp import FormData
-    import json
-    url = server + 'INITSERVE'
-    json_config = json.dumps(config).encode('utf-8')
-    datas = FormData()
-    datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
-    #SEND_> Solicitud Asincrona.
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    task = querysyncro(url, datas)
-    resp = loop.run_until_complete(task)
-    #print(resp)
-    return resp  
+    if 'START' in config['STATUS']:
+        try:           
+            command = 'ray start --head && serve start'
+            check_output(args=command, shell=True).decode('utf-8')
+            DATA = 'SERVER STARTED'
+        except:
+            DATA = 'SERVER RUNNING'
+    elif 'STOP' in config['STATUS']:
+        command = 'ray stop --force'
+        check_output(args=command, shell=True).decode('utf-8')
+        DATA = 'SERVER STOPPED'
+
+    return DATA  
 
 
 @app.route('/pruebafiltro',methods=['GET','POST'])
@@ -391,5 +385,5 @@ def pruebafiltro():
     
 
 if __name__=="__main__":
-    app.run(host='192.168.1.30',port="5001",debug=True)
+    app.run(host='192.168.1.30',port="5100",debug=True)
     
