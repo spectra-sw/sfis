@@ -30,21 +30,8 @@ from models.Ingresos import *
 from utils.functions import *
 
 app = Flask(__name__)
+app.config.from_pyfile('config.py')
 
-"""
-CONFIG DATA
-"""
-
-server='http://192.168.1.30:5100/'
-#server='http://30cd-190-147-196-18.ngrok.io/'
-ENV = 'prod'
-if ENV == 'dev':
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:80085700@localhost:5432/sfis"
-    
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:5p3ctr4-21@localhost:5432/sfis"
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 """
 INCIAL ESTRUCTURES
@@ -137,6 +124,10 @@ def registro():
 @app.route('/monitor')
 def monitor():
     return render_template('monitor2.html', titulo="SFIS")
+
+@app.route('/actividad')
+def actividad():
+    return render_template('actividad.html', titulo="SFIS")
 
 @app.route('/rutas')
 def rutas():
@@ -385,5 +376,8 @@ def pruebafiltro():
     
 
 if __name__=="__main__":
-    app.run(host='192.168.1.30',port="5100",debug=True)
+    print(app.config)
+    app.run()
+    
+    
     
