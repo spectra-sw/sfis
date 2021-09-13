@@ -31,8 +31,7 @@ from utils.functions import *
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-
-
+server=app.config['SERVERML']
 """
 INCIAL ESTRUCTURES
 """
