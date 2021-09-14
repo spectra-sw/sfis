@@ -62,13 +62,36 @@ function camara(id,accion){
     parametros = $( "#parametros" ).serialize(); 
     
     datos ={ id:id, parametros:parametros, accion: accion}
-    console.log(datos)
+    //console.log(datos)
         $.ajax({
                 url: url,
                 data: datos,
                 type:'POST',
                 success: function(data) {
-                    alert("respuesta:"+data);
+                    if (data == id){
+                        alert("CÁMARA ACTIVADA");
+                    }
+                    else{
+                        alert("ERROR AL ACTIVAR CÁMARA");
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+        }); 
+}
+
+function testcamara(id){
+    url = '/testcamara'
+    
+    datos ={ id:id}
+    //console.log(datos)
+        $.ajax({
+                url: url,
+                data: datos,
+                type:'POST',
+                success: function(data) {
+                    alert(data)
                 },
                 error: function(error) {
                     console.log(error);

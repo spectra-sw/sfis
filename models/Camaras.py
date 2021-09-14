@@ -11,6 +11,7 @@ from utils.functions import maxId
 import shortuuid
 import base64
 from subprocess import check_output
+import cv2
 
 nest_asyncio.apply()
 
@@ -58,6 +59,17 @@ def guardarCamara(datos,db):
     print(query)
     sql = text(query)
     result = db.engine.execute(sql)
+
+def testcamara(id,db):
+    camara = getCamaraById(id,db)
+    url =camara[0][8]
+    # try to open the stream
+    print(url)
+    cap = cv2.VideoCapture(url)
+    ret = cap.isOpened()  # if it was succesfully opened, that's the URL you need
+    cap.release()
+    return str(ret)
+
 
 def activar(server,id,db,parametros,accion):
     parametros=parametros.split("&")

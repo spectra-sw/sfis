@@ -97,6 +97,7 @@
                                         <td></td>
                                         <td><button class="btn btn-success btn-sm" id ="{{camara[0]}}" onclick="camara(this.id,1)"> <i class="fa fa-fw fa-toggle-on"></i></button></td>
                                         <td><button class="btn btn-danger btn-sm" id={{camara[0]}} onclick="camara(this.id,0)"> <i class="fa fa-fw fa-power-off "></i></button></td>
+                                        <td><button class="btn btn-warning btn-sm" id={{camara[0]}} onclick="testcamara(this.id)">Test</button></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -116,7 +117,7 @@
                                     <form id="parametros">   
                                         <tr  class="table-default">
                                             <td>Time ml</td>
-                                            <td><input type="text" value="1.0" class="form-control" name="timeml"> </td>
+                                            <td><input type="text" value="0.5" class="form-control" name="timeml"> </td>
                                         </tr>
                                         <tr  class="table-default">
                                             <td>N replica</td>
@@ -128,15 +129,15 @@
                                         </tr>
                                         <tr  class="table-default">
                                             <td>Sizeface</td>
-                                            <td><input type="text" value="25" class="form-control" name="sizeface"> </td>
+                                            <td><input type="text" value="40" class="form-control" name="sizeface"> </td>
                                         </tr>
                                         <tr  class="table-default">
                                             <td>Thr</td>
-                                            <td><input type="text" value="0.85" class="form-control" name="thr"> </td>
+                                            <td><input type="text" value="0.80" class="form-control" name="thr"> </td>
                                         </tr>
                                         <tr  class="table-default">
                                             <td>Thr person</td>
-                                            <td><input type="text" value="50" class="form-control" name="thrperson"> </td>
+                                            <td><input type="text" value="70" class="form-control" name="thrperson"> </td>
                                         </tr>
                                         <tr  class="table-default">
                                             <td>Thr min person</td>

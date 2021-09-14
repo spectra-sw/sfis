@@ -114,8 +114,9 @@ def registro():
             'contacto' : request.form['contacto'],
             'motivo' : request.form['motivo'],
         }
-        registroRemoto(datos)
+        
         registroIngreso(datosIngreso,db)
+        registroRemoto(datos)
         return render_template('menu.html', titulo="SFIS")
         #return jsonify("Visitante creado")
 
@@ -236,6 +237,13 @@ def activarcamara():
         activar(server,id,db,parametros,accion)    
 
         return str(id)    
+@app.route('/testcamara',methods=['POST'])
+def tcamara():  
+    if request.method == 'POST':
+        id= request.form['id']  
+        res=testcamara(id,db)
+
+        return res   
 
 @app.route('/guardarcamara',methods=['POST'])
 def gcamara():
@@ -288,6 +296,8 @@ def registroRemoto(datos):
         task = querysyncro(urlregitro, datas)
         resp = loop.run_until_complete(task)
         assert resp["_shards"]["successful"] == 1
+    
+
 
 @app.route('/server',methods=['POST'])
 def initserver():
@@ -376,7 +386,7 @@ def pruebafiltro():
 
 if __name__=="__main__":
     print(app.config)
-    app.run()
+    app.run(host=app.config['HOST'],port=app.config['PORT'])
     
     
     
