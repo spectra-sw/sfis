@@ -306,7 +306,7 @@ def initserver():
     print(status)
     if status=="2":
         try:           
-            command = 'bentoml serve FaceOnnx:latest'
+            command = 'bentoml serve-gunicorn FaceOnnx:latest'
             check_output(args=command, shell=True).decode('utf-8')
             DATA = 'SERVER ML STARTED'
         except:
