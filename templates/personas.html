@@ -1,0 +1,63 @@
+{% extends 'menuTemplate.html' %}
+{% block content %}    
+<br><br>
+    <div class="container">
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header">Filtro de búsqueda</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-5">
+                                No. identificación <input type="text" id="cc" name="cc" class="form-control">
+                            </div>
+                            <div class="col-5">
+                                Nombre <input type="text" id="nombre" name="nombre" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-primary">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <br><br>
+                <table class="table table-bordered table-stripped table-sm">
+                    <thead>
+                        <tr class="table-warning">
+                            <th>Foto</th>
+                            <th>Tipo id</th>
+                            <th>No.</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Empresa</th>
+                            <th>Teléfono</th>
+                            <th></th
+                          </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in visitantes %}
+                          <tr  class="table-default">
+                            <td><img src="{{ url_for('static', filename='users/'+v[7]) }}" width="100px"></td>
+                            <td>{{v[1]}}</td>
+                            <td>{{v[2]}}</td>
+                            <td>{{v[3]}}</td>
+                            <td>{{v[4]}}</td>
+                            <td>{{v[5]}}</td>
+                            <td>{{v[6]}}</td>
+                            <td><button class="btn btn-warning btn-sm" > <i class="fa fa-fw fa-pencil"></i></button></td>
+                            <td><button class="btn btn-danger btn-sm" > <i class="fa fa-fw fa-trash"></i></button></td>
+                           
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                <br><br>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

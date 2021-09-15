@@ -198,6 +198,25 @@ def ingresos():
     '''
 
     return render_template('ingresos.html', titulo="SFIS", ingresos=ingresos)
+@app.route('/personas',methods=['GET','POST'])
+def personas():
+    query ="select * from visitantes order by id asc"
+    sql = text(query)
+    result = db.engine.execute(sql)
+    visitantes=[]
+    print(result)
+    for row in result:
+        visitantes.append(list(row))
+        foto = str(row[0])+"a.jpg"
+        visitantes[len(visitantes)-1].append(foto)
+    print(visitantes)
+    '''
+    for i in ingresos:
+        nombre =getNombre(db,i[1])
+        i[1]=getNombre(db,nombre)
+    '''
+
+    return render_template('personas.html', titulo="SFIS", visitantes=visitantes)
 
 @app.route('/zonas',methods=['GET','POST'])
 def zonas():
@@ -391,6 +410,59 @@ def pruebafiltro():
     return registros
 
     '''
+    
+@app.route('/buscaract',methods=['GET','POST'])
+def buscaract():
+    data = request.form.to_dict()
+    print(data)
+    
+
+    async def querysyncro(urls, files): 
+        connector = aiohttp.TCPConnector(limit= None)    
+        async with aiohttp.ClientSession(connector= connector) as session:        
+            async with session.post(url= urls, data= files) as Respuesta:
+                #print(await Respuesta.text()) 
+                return await Respuesta.json()
+
+    from aiohttp import FormData
+    import json
+    urlregitro = server + 'READFILTRO'
+    host = "localhost"
+    port = 9200
+    indexread = "activity"
+   
+    minutes = timedelta(minutes=10)
+    now = datetime.now()
+    fmin =data['desde']
+    fmin = fmin[0:10]+"T"+fmin[11:]+"Z"
+    print("Min"+fmin)
+    
+    now = datetime.now()
+    fmax =data['hasta']
+    fmax = fmax[0:10]+"T"+fmax[11:]+"Z"
+    print("Max"+fmax)
+
+    search="FECHA"
+    if data['cc'] !='':
+        CC = data['cc']
+        search = "FECHA&CC"
+    
+    
+    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20, "search":search }
+    json_config = json.dumps(config).encode('utf-8')
+    #FRAME_> OpenCV.
+
+    #DATA_> Estructura de datos.
+    datas = FormData()
+    datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
+    #SEND_> Solicitud Asincrona.
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    task = querysyncro(urlregitro, datas)
+    resp = loop.run_until_complete(task)
+    #print(resp)
+    return resp  
+    
     
 
 if __name__=="__main__":

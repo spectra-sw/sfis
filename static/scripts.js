@@ -123,3 +123,15 @@ function server(status){
           }
       });
 }
+function buscaract(){
+    data=$( "#formbuscaract" ).serialize();  
+    url="/buscaract";
+    $.ajax({
+        url: url,
+        data:data,
+        type: "POST", 
+        success: function(data){
+            $("#resultado").html(data);
+          }
+      });
+}

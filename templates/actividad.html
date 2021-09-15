@@ -7,10 +7,42 @@
                 <div class="card" style="margin: 15px;">
                     <div class="card-header">Opciones de búsqueda</div>
                     <div class="card-body">
+                        <form id="formbuscaract">
                         <div class="row">
-                            
-    
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="cc">No. Identificación</label>
+                                    <input type="text" class="form-control" placeholder="" id="cc" name="cc" value="">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="desde">Desde</label>
+                                    <input class="form-control" type="datetime-local" id="desde" name="desde">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="desde">Hasta</label>
+                                    <input class="form-control" type="datetime-local" id="desde" name="hasta">
+                                </div>
+                            </div>
                         </div>
+                        </form>
+
+                        <button class="btn btn-primary "  onclick="buscaract()">Buscar</button>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" style="background-color: white;">
+            <div class="col-12">
+                <div class="card" style="margin: 15px;">
+                    <div class="card-header">Resultados</div>
+                    <div class="card-body">
+                        <div id="resultado"></div>
+                        
                     </div>
                   </div>
             </div>
