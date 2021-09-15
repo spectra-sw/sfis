@@ -304,22 +304,31 @@ def initserver():
     data = request.form.to_dict()
     status = data['status']
     print(status)
-    if status == "1":
-        config = {"STATUS": 'START'}
-    if status == "0":
-        config = {"STATUS": 'STOP'}
-
-    if 'START' in config['STATUS']:
+    if status=="2":
         try:           
-            command = 'ray start --head && serve start'
+            command = 'bentoml serve FaceOnnx:latest'
             check_output(args=command, shell=True).decode('utf-8')
-            DATA = 'SERVER STARTED'
+            DATA = 'SERVER ML STARTED'
         except:
-            DATA = 'SERVER RUNNING'
-    elif 'STOP' in config['STATUS']:
-        command = 'ray stop --force'
-        check_output(args=command, shell=True).decode('utf-8')
-        DATA = 'SERVER STOPPED'
+                DATA = 'SERVER ML RUNNING'
+
+    else:
+        if status == "1":
+            config = {"STATUS": 'START'}
+        if status == "0":
+            config = {"STATUS": 'STOP'}
+
+        if 'START' in config['STATUS']:
+            try:           
+                command = 'ray start --head && serve start'
+                check_output(args=command, shell=True).decode('utf-8')
+                DATA = 'SERVER STARTED'
+            except:
+                DATA = 'SERVER RUNNING'
+        elif 'STOP' in config['STATUS']:
+            command = 'ray stop --force'
+            check_output(args=command, shell=True).decode('utf-8')
+            DATA = 'SERVER STOPPED'
 
     return DATA  
 
