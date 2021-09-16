@@ -68,12 +68,14 @@ function camara(id,accion){
                 data: datos,
                 type:'POST',
                 success: function(data) {
+                    alert(data)
+                    /*
                     if (data == id){
                         alert("CÁMARA ACTIVADA");
                     }
                     else{
                         alert("ERROR AL ACTIVAR CÁMARA");
-                    }
+                    }*/
                 },
                 error: function(error) {
                     console.log(error);

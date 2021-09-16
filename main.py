@@ -253,9 +253,9 @@ def activarcamara():
         parametros=request.form['parametros'] 
         accion =request.form['accion'] 
         #print(parametros) 
-        activar(server,id,db,parametros,accion)    
+        data=activar(server,id,db,parametros,accion)    
 
-        return str(id)    
+        return str(data)    
 @app.route('/testcamara',methods=['POST'])
 def tcamara():  
     if request.method == 'POST':
