@@ -27,6 +27,18 @@
                                     <input class="form-control" type="datetime-local" id="desde" name="hasta">
                                 </div>
                             </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="tipo">Cámara</label>
+                                    <select class="form-control" id="cam" name="cam">
+                                        <option value=""></option>
+                                        
+                                        {% for camara in camaras %}
+                                            <option value="{{ camara[11] }}">{{ camara[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div> 
                         </div>
                         </form>
 

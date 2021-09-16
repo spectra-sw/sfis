@@ -128,7 +128,9 @@ def monitor():
 
 @app.route('/actividad')
 def actividad():
-    return render_template('actividad.html', titulo="SFIS")
+    camaras = getCamaras(db)
+    print(camaras)
+    return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
 @app.route('/rutas')
 def rutas():
@@ -454,8 +456,14 @@ def buscaract():
         CC = data['cc']
         search = "FECHA&CC"
     
+    if data['cam'] !='':
+        search="CAMDATE"
+        if data['cc'] !='':
+            search = "CAMDATEDOC"
     
-    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 1000, "search":search , 'CC':data['cc']}
+    
+    
+    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 1000, "search":search , 'CC':data['cc'], 'cam':data['cam']}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
 
