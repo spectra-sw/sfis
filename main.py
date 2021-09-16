@@ -37,6 +37,7 @@ INCIAL ESTRUCTURES
 """
 
 registros=[]
+registros2=[]
 db = SQLAlchemy(app)
 
 
@@ -138,6 +139,11 @@ def rutas():
 def activityd(id):
     global registros
     return render_template('cardactivity.html', dato=registros[int(id)])
+
+@app.route('/activity/get2/<id>',methods=['GET'])
+def activityd2(id):
+    global registros2
+    return render_template('cardactivity2.html', dato=registros2[int(id)])
 
 @app.route('/activity/get',methods=['GET'])
 def activity():
@@ -413,6 +419,7 @@ def pruebafiltro():
     
 @app.route('/buscaract',methods=['GET','POST'])
 def buscaract():
+    global registros2
     data = request.form.to_dict()
     print(data)
     
@@ -434,12 +441,12 @@ def buscaract():
     minutes = timedelta(minutes=10)
     now = datetime.now()
     fmin =data['desde']
-    fmin = fmin[0:10]+"T"+fmin[11:]+"Z"
+    fmin = fmin+"Z"
     print("Min"+fmin)
     
     now = datetime.now()
     fmax =data['hasta']
-    fmax = fmax[0:10]+"T"+fmax[11:]+"Z"
+    fmax = fmax+"Z"
     print("Max"+fmax)
 
     search="FECHA"
@@ -448,7 +455,7 @@ def buscaract():
         search = "FECHA&CC"
     
     
-    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20, "search":search }
+    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 1000, "search":search , 'CC':data['cc']}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
 
@@ -460,8 +467,20 @@ def buscaract():
     asyncio.set_event_loop(loop)
     task = querysyncro(urlregitro, datas)
     resp = loop.run_until_complete(task)
-    #print(resp)
-    return resp  
+    print(resp)
+    #return resp 
+    registros2 = resp
+
+    for r in registros2:
+        if r['title_authorization']==False:
+            r['clase'] = "table-danger"
+        if r['title_authorization']==True:
+            r['clase'] = "table-success"
+        
+        r['foto'] = r['title_face_uuid']
+        r['env'] = r['title_imagen_uuid']
+
+    return render_template('registros2.html', registros= registros2) 
     
     
 

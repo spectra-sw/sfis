@@ -1,0 +1,27 @@
+<table class="table table-bordered table-sm">
+<thead>
+    <tr class="table-warning">
+        <th>Fecha</th>
+        <th>Nombre</th>
+        <th>Cámara</th>
+        <th>Score</th>
+        <th></th
+      </tr>
+</thead>
+<tbody>
+    {% for registro in registros %}
+      <tr  class="{{registro['clase']}}">
+        <td>{{registro['title_date']}}</td>
+        <td>{{registro['title_name']}}</td>
+        <td>{{registro['title_idcam']}}</td>
+        {% if registro['title_score'] < 50  %}
+        <td>- 50%</td>
+        {% else %}
+        <td>{{registro['title_score']}}</td>
+        {% endif %}
+        <td><button class="btn btn-primary btn-sm"  id ="{{loop.index0 }}" onclick="detalleA2(this.id)" > <i class="fa fa-fw fa-bookmark"></i></button></td>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

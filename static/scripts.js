@@ -37,6 +37,18 @@ function detalleA(id){
         }); 
    
 }
+function detalleA2(id){
+    url = '/activity/get2/'+id
+        $.ajax({
+                url: url,
+                type:'GET',
+                success: function(data) {
+                    $("#detalleA2").html(data);
+                    $("#detalleA2").modal();
+                }
+        }); 
+   
+}
 function buscarp(){
     tipoid = $("#tipoid").val();
     id = $("#id").val();
