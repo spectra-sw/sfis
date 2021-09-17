@@ -12,10 +12,8 @@
         <div class="modal-body">
             <div class="card" style="width:400px">
                 <div class="row">
-                  <div class="col-6">
-                    <img class="card-img-top img-fluid" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:100%">
-                  </div>
-                  <div class="col-6">
+            
+                  <div class="col-12">
                     <img class="card-img-top img-fluid" src="{{ url_for('static', filename='environment/'+dato['env']) }}" alt="Card image" style="width:100%">
                   </div>
                 </div>
@@ -28,13 +26,18 @@
                           <tr>
                                 <td>
                                     <table class="table table-responsive">
-                                            <tr><td class="table-primary">FECHA</td><td>{{ dato['title_date']}}</td></tr>
-                                            <tr><td class="table-primary">CAMARA</td><td>{{ dato['title_idcam']}}</td></tr>
-                                            <tr><td class="table-primary">ZONA</td><td>GERENCIA</td></tr>
-                                            <tr><td class="table-primary">SCORE</td><td>{{ dato['title_score']}}</td></tr>
-
-                                            <tr><td class="table-danger">NO AUTORIZADO</td></tr>
-
+                                            <tr>
+                                              <td> <img class="card-img-top img-fluid" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:100%"></td>
+                                              <td> 
+                                                  <tr><td class="table-primary">FECHA</td><td>{{ dato['title_date']}}</td></tr>
+                                                  <tr><td class="table-primary">CAMARA</td><td>{{ dato['title_idcam']}}</td></tr>
+                                                  <tr><td class="table-primary">ZONA</td><td>GERENCIA</td></tr>
+                                                  <tr><td class="table-primary">SCORE</td><td>{{ dato['title_score']}}</td></tr>
+      
+                                                  <tr><td class="table-danger">NO AUTORIZADO</td></tr>
+                                              </td>
+                                            </tr>
+                                           
                                     </table>
                                 </td> 
                            
