@@ -27,6 +27,20 @@ def getCamaraById(id,db):
     #print(camara)
     return camara    
 
+def getZonaCamara(uuid,db):
+    query ="SELECT zonas.nombre \
+            FROM camaras \
+            INNER JOIN zonas ON camaras.id_zona = zonas.id where camaras.uuid = '"+uuid+"'";
+    sql = text(query)
+    result = db.engine.execute(sql)
+    zona=""
+    #print(result)
+    for row in result:
+        zona=row
+
+    #print(camara)
+    return zona    
+
 def getCamaras(db):
     query ="select * from camaras"
     sql = text(query)

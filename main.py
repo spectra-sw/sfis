@@ -161,7 +161,9 @@ def activity():
             r['clase'] = "table-danger"
         if r['title_authorization']==True:
             r['clase'] = "table-success"
-        
+
+        zona = getZonaCamara(r['title_idcam'],db)
+        r['zona'] = zona
         r['foto'] = r['title_face_uuid']
         r['env'] = r['title_imagen_uuid']
         #print(r['foto'])
@@ -174,7 +176,7 @@ def activity():
         with open(filePhoto, 'wb') as f_output:
             f_output.write(jpg_original)
         '''
-    
+    print(registros)
     return render_template('registros.html', registros= registros)
 
 
