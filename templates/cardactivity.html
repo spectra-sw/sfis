@@ -26,7 +26,9 @@
                                 <td>
                                     <table class="table">
                                             <tr>
-                                              <td> <img class="card-img-top img-responsive" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:50%"></td>
+                                              <td>
+                                                <tr><td><img class="card-img-top img-responsive" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:50%"></td></tr>
+                                              </td>
                                               <td> 
                                                   <tr><td class="table-primary">FECHA</td><td>{{ dato['title_date']}}</td></tr>
                                                   <tr><td class="table-primary">CAMARA</td><td>{{ dato['title_idcam']}}</td></tr>
