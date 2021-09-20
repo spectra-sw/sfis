@@ -34,11 +34,11 @@ def getZonaCamara(uuid,db):
     sql = text(query)
     result = db.engine.execute(sql)
     zona=""
-    print(result)
+    #print(result)
     for row in result:
         zona=row[0]
 
-    #print(camara)
+    print(zona+ " " + uuid)
     return zona    
 
 def getCamaras(db):
