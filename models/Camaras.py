@@ -36,7 +36,7 @@ def getZonaCamara(uuid,db):
     for row in result:
         zona=row[0]
     #print(query)
-    print(zona+ " " + uuid)
+    #print(zona+ " " + uuid)
     return zona    
 
 def getCamaras(db):
