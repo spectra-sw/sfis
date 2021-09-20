@@ -176,7 +176,7 @@ def activity():
         with open(filePhoto, 'wb') as f_output:
             f_output.write(jpg_original)
         '''
-    print(registros)
+    #print(registros)
     return render_template('registros.html', registros= registros)
 
 
@@ -489,6 +489,8 @@ def buscaract():
         
         r['foto'] = r['title_face_uuid']
         r['env'] = r['title_imagen_uuid']
+        zona = getZonaCamara(r['title_idcam'],db)
+        r['zona'] = zona
 
     return render_template('registros2.html', registros= registros2) 
     
