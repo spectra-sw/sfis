@@ -13,7 +13,7 @@
             <div class="card" >
                 <div class="row">
                   <div class="col-12">
-                    <img class="card-img-top img-fluid" src="{{ url_for('static', filename='environment/'+dato['env']) }}" alt="Card image" style="width:100%">
+                    <img class="card-img-top img-fluid" src="{{ url_for('static', filename='environment/_data'+dato['env']) }}" alt="Card image" style="width:100%">
                   </div>
                 </div>
                 <div class="card-body">
@@ -24,7 +24,7 @@
                         <tbody>
                           <tr>
                                 <td>
-                                  <img class="card-img-top img-responsive" src="{{ url_for('static', filename='activity/'+dato['foto']) }}" alt="Card image" style="width:100%">
+                                  <img class="card-img-top img-responsive" src="{{ url_for('static', filename='activity/_data'+dato['foto']) }}" alt="Card image" style="width:100%">
                                 </td>
                                 <td>
                                   <table class="table">
