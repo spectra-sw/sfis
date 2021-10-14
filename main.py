@@ -498,7 +498,14 @@ def buscaract():
 
 if __name__=="__main__":
     print(app.config)
-    app.run(host=app.config['HOST'],port=app.config['PORT'])
+    try:
+        commandadd = 'cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+        commandadd = 'cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+        app.run(host=app.config['HOST'],port=app.config['PORT'])
+    except: 
+        print("Error al copiar archivos")
     
     
     
