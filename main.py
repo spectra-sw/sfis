@@ -130,6 +130,10 @@ def monitor():
 def actividad():
     camaras = getCamaras(db)
     print(camaras)
+    commandadd = 'cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
+    commandadd = 'cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
     return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
 @app.route('/rutas')
@@ -177,6 +181,11 @@ def activity():
             f_output.write(jpg_original)
         '''
     #print(registros)
+    commandadd = 'cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
+    commandadd = 'cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
+    print("Imagenes copiadas")
     return render_template('registros.html', registros= registros)
 
 
