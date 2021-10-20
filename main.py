@@ -130,9 +130,9 @@ def monitor():
 def actividad():
     camaras = getCamaras(db)
     print(camaras)
-    commandadd = 'sudo cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+    commandadd = 'sudo cp -u /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
-    commandadd = 'sudo cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+    commandadd = 'sudo cp -u /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
@@ -181,9 +181,9 @@ def activity():
             f_output.write(jpg_original)
         '''
     #print(registros)
-    commandadd = 'sudo cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+    commandadd = 'sudo cp -u /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
-    commandadd = 'sudo cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+    commandadd = 'sudo cp -u /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     print("Imagenes copiadas")
     return render_template('registros.html', registros= registros)
@@ -508,9 +508,9 @@ def buscaract():
 if __name__=="__main__":
     print(app.config)
     try:
-        commandadd = 'sudo cp -a /var/lib/docker/volumes/activity/_data/. static/activity/'
+        commandadd = 'sudo cp -u /var/lib/docker/volumes/activity/_data/. static/activity/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-        commandadd = 'sudo cp -a /var/lib/docker/volumes/environment/_data/. static/environment/'
+        commandadd = 'sudo cp -u /var/lib/docker/volumes/environment/_data/. static/environment/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
         app.run(host=app.config['HOST'],port=app.config['PORT'])
     except: 
