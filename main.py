@@ -19,6 +19,7 @@ import asyncio
 import nest_asyncio
 from subprocess import check_output
 from datetime import datetime, timedelta
+from threading import Thread
 nest_asyncio.apply()
 
 
@@ -130,10 +131,14 @@ def monitor():
 def actividad():
     camaras = getCamaras(db)
     print(camaras)
+    '''
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
+    '''
+    Thread(target=copyImages,daemon=True).start()
+
     return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
 @app.route('/rutas')
@@ -181,11 +186,14 @@ def activity():
             f_output.write(jpg_original)
         '''
     #print(registros)
+    '''
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     print("Imagenes copiadas")
+    '''
+    Thread(target=copyImages,daemon=True).start()
     return render_template('registros.html', registros= registros)
 
 
@@ -502,19 +510,15 @@ def buscaract():
         r['zona'] = zona
 
     return render_template('registros2.html', registros= registros2) 
+
     
     
 
 if __name__=="__main__":
     print(app.config)
-    try:
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
-        DATA = check_output(commandadd, shell=True).decode('utf-8')
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
-        DATA = check_output(commandadd, shell=True).decode('utf-8')
-        app.run(host=app.config['HOST'],port=app.config['PORT'])
-    except: 
-        print("Error al copiar archivos")
-    
+    Thread(target=copyImages,daemon=True).start()
+
+    app.run(host=app.config['HOST'],port=app.config['PORT'])
+   
     
     

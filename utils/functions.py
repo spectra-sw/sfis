@@ -53,3 +53,10 @@ def maxId(table,db):
         return int(id[0][0])+1
     else:
         return 1
+
+def copyImages():
+    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
+    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+    DATA = check_output(commandadd, shell=True).decode('utf-8')
+    print("Imagenes copiadas")
