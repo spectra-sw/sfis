@@ -6,6 +6,7 @@ from datetime import datetime
 from faker import Faker
 import random
 import uuid
+from subprocess import check_output
 def fakerRegistros(registros):
     #global registros
     fake = Faker()
