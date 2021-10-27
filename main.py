@@ -33,6 +33,7 @@ from utils.functions import *
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 server=app.config['SERVERML']
+#print(server)
 """
 INCIAL ESTRUCTURES
 """
@@ -326,7 +327,7 @@ def registroRemoto(datos):
     IMG = [imgf, imgld, imgli]
     idc = "XXXXX"
     config = { "idc": idc , "thr": 0.85, "size": 12, "name": nombre, "CC": cc, "Access": access, "host": host,
-    "port": port, "indexwrite": indexwrite }
+    "port": port, "indexwrite": indexwrite, "thrcw":0.0, "thrch":0.0}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
     for urlimg in IMG:
