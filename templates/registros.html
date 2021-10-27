@@ -15,7 +15,7 @@
         <td>{{registro['title_name']}}</td>
         <td>{{registro['zona']}}</td>
         {% if registro['title_score'] < 50  %}
-        <td>- 50%</td>
+        <td>{{registro['title_score']}}</td>
         {% else %}
         <td>{{registro['title_score']}}</td>
         {% endif %}
