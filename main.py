@@ -338,12 +338,21 @@ def registroRemoto(datos):
         datas.add_field('image', img, filename='image.jpg', content_type= 'image/jpg')
         datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
         #SEND_> Solicitud Asincrona.
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        task = querysyncro(urlregitro, datas)
-        resp = loop.run_until_complete(task)
-        assert resp["_shards"]["successful"] == 1
-    
+        try:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            task = querysyncro(urlregitro, datas)
+            resp = loop.run_until_complete(task)
+            STATUS = True
+            assert resp['_shards']['successful'] == 1
+        except:
+            STATUS = False
+        finally:
+            loop.close()
+
+
+
+        
 
 
 @app.route('/server',methods=['POST'])
@@ -491,11 +500,20 @@ def buscaract():
     datas = FormData()
     datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
     #SEND_> Solicitud Asincrona.
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    task = querysyncro(urlregitro, datas)
-    resp = loop.run_until_complete(task)
-    print(resp)
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        task = querysyncro(urlregitro, datas)
+        resp = loop.run_until_complete(task)
+        print(resp)
+        STATUS = True
+        
+    except:
+        STATUS = False
+    finally:
+        loop.close()
+
+    
     #return resp 
     registros2 = resp
 
