@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login/css/normalize.css') }}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='login/css/styles-dist.css') }}">
+    <script src="https://kit.fontawesome.com/55f90cd05f.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,700&display=swap" rel="stylesheet">
+    <title>Login Form SFIS</title>
+</head>
+<body>
+
+<div class="logo">
+    <img  src="{{ url_for('static', filename='login/img/Logo-SFIS.png') }}" alt="Logo SIFS">
+</div>
+
+<form class="form">
+    <h1>Ingresa tus datos</h1>
+    <div class="container">
+        <div class="input-container">
+            <div class="icon">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Nombre de Usuario">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="input-container">
+            <div class="icon">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="Contraseña">
+            </div>
+        </div>
+    </div>
+    <!-- Submit -->
+    <input type="button" value="Ingresar" class="button" onclick="inicio()">
+    <p>
+        <a href="#">¿Olvidó su nombre de usuario / contraseña?</a>
+    </p>
+</form>
+
+<div class="footer">
+    <p>Spectra Ingeniería - Todos los derechos reservados 2021</p>
+</div>
+</body>
+</html>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='inicio/css/normalize.css') }}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='inicio/css/styles-dist.css') }}">
+    <script src="https://kit.fontawesome.com/55f90cd05f.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,700&display=swap" rel="stylesheet">
+    <title>Inicio SFIS</title>
+</head>
+<body>
+
+<div class="logo">
+    <img  src="{{ url_for('static', filename='login/img/Logo-SFIS.png') }}" alt="Logo SIFS">
+</div>
+
+<form class="form">
+    <div class="container">
+        <div class="input-container">
+            <div class="icon-visitors">
+                <i class="fas fa-users"></i>
+                <input type="submit" value="VISITANTES" class="button-visitors" onclick="window.open('/ingreso','_blank');">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="input-container">
+            <div class="icon-admin">
+                <i class="fas fa-user-cog"></i>
+                <input type="submit" value="ADMINISTRACIÓN" class="button-admin" onclick="window.open('/menu','_blank');">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="input-container">
+            <div class="icon-monitoring">
+                <i class="fas fa-eye"></i>
+                <input type="submit" value="MONITOREO" class="button-monitoring" onclick="window.open('/monitor','_blank');">
+            </div>
+        </div>
+    </div>
+    <!-- Submit -->
+
+</form>
+    <div class="footer">
+        <p>Spectra Ingeniería - Todos los derechos reservados 2021</p>
+    </div>
+</body>
+</html>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>

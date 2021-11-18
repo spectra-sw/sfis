@@ -1,0 +1,155 @@
+* {
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    background: url(../img/bg-SFIS-1920x1080.jpg) no-repeat center top;
+    font-family: 'Titillium Web', sans-serif;
+    height: 100vh;
+}
+
+
+.logo {
+    display: inline-block;
+    width: 100%;
+    height: 80%;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.logo img {
+    height: 10%;
+}
+
+/* form */
+.container {
+    width: 100%;
+}
+
+.form {
+    margin-top: 50px;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.input-container {
+    margin-bottom: 30px;
+}
+
+.icon-visitors {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 30px;
+    padding-left: 20px;
+    color: #fff;
+    font-size: 30px;
+    background-color: #379920;
+}
+
+.button-visitors {
+    border: none;
+    width: 100%;
+    margin-left: 20px;
+    letter-spacing: 10px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    background-color:#45BF28;
+    border-radius: 0 30px 30px 0;
+    height: 50px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.button-visitors:hover {
+    color: #2B2C6A;
+    transition: 0.5s all ease-in;
+}
+
+.icon-admin {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 30px;
+    padding-left: 20px;
+    color: #fff;
+    font-size: 30px;
+    background-color: #855B16;
+}
+
+.button-admin {
+    border: none;
+    width: 100%;
+    margin-left: 20px;
+    letter-spacing: 7px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    background-color:#A6721B;
+    border-radius: 0 30px 30px 0;
+    height: 50px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.button-admin:hover {
+    color: #2B2C6A;
+    transition: 0.5s all ease-in;
+}
+
+.icon-monitoring {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 30px;
+    padding-left: 20px;
+    color: #fff;
+    font-size: 30px;
+    background-color: #585699;
+}
+
+.button-monitoring {
+    border: none;
+    width: 100%;
+    margin-left: 20px;
+    letter-spacing: 10px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    background-color:#6E6BBF;
+    border-radius: 0 30px 30px 0;
+    height: 50px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.button-monitoring:hover {
+    color: #6E6BBF;
+    transition: 0.5s all ease-in;
+}
+/* end form */
+
+p {
+    text-align: center;
+    color: white;
+    margin-top: 100px;
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: lighter;
+    margin-top: 30px;
+}
+
+.footer p {
+    width: 100%;
+    margin-top: 0px;
+}
+
+
+@media (min-width:1024px) {
+    .form {
+        width: 500px;
+    }
+}

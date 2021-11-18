@@ -49,11 +49,11 @@ ROUTES
 
 @app.route('/')
 def inicio():
-    return render_template('login.html', titulo="SFIS")
+    return render_template('logind.html', titulo="SFIS")
 
 @app.route('/inicio',methods=['GET','POST'])
 def minicio():
-    return render_template('inicio.html', titulo="SFIS")
+    return render_template('iniciod.html', titulo="SFIS")
 
 @app.route('/menu',methods=['GET','POST'])
 def menu():
@@ -343,10 +343,9 @@ def registroRemoto(datos):
             asyncio.set_event_loop(loop)
             task = querysyncro(urlregitro, datas)
             resp = loop.run_until_complete(task)
-            STATUS = True
             assert resp['_shards']['successful'] == 1
         except:
-            STATUS = False
+            print("Error al hacer registro")
         finally:
             loop.close()
 
@@ -505,11 +504,9 @@ def buscaract():
         asyncio.set_event_loop(loop)
         task = querysyncro(urlregitro, datas)
         resp = loop.run_until_complete(task)
-        print(resp)
-        STATUS = True
-        
+        print(resp) 
     except:
-        STATUS = False
+        pass
     finally:
         loop.close()
 
@@ -534,12 +531,13 @@ def buscaract():
     
 
 if __name__=="__main__":
-    print(app.config)
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
-    DATA = check_output(commandadd, shell=True).decode('utf-8')
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
-    DATA = check_output(commandadd, shell=True).decode('utf-8')
-    #Thread(target=copyImages,daemon=True).start()
+    #print(app.config)
+    if app.config['ENV'] != "dev":
+        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+  
 
     app.run(host=app.config['HOST'],port=app.config['PORT'])
    
