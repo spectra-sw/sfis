@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    background: url(../img/bg-SFIS-1920x1080.jpg) no-repeat center top;
+    font-family: 'Titillium Web', sans-serif;
+    height: 100vh;
+}
+
+.container {
+    width: 100%;
+}
+
+.logo {
+    display: inline-block;
+    width: 100%;
+    height: 80%;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.logo img {
+    height: 10%;
+}
+
+
+.form {
+    margin-top: 45px;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Titillium Web', sans-serif;
+    font-weight:700;
+    color: white;
+    margin-bottom: 50px;
+}
+
+.input-container {
+    margin-bottom: 30px;
+}
+
+input[type="text"],
+input[type="password"] {
+    font-size: 20px;
+    width: 80%;
+    height: 50px;
+    padding: 20px;
+    border: none;
+    outline: none;
+    color: #ccc;
+    background-color: rgba(255,255,255,0);
+}
+
+::placeholder { color: #fff; }
+
+.icon {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 30px;
+    padding-left: 30px;
+    color: #fff;
+    background-color: rgba(255,255,255,0.3);
+}
+
+.icon:hover {
+    color:#45BF28;
+    padding-left: 20px;
+    transition: 0.3s all ease-in;
+}
+
+.button {
+    border: none;
+    width: 100%;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    background-color:#45BF28;
+    border-radius: 30px;
+    height: 50px;
+    padding: 15px 20px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: -webkit-linear-gradient(left, #45BF28, #1B83C3);
+    background: -o-linear-gradient(left, #45BF28, #1B83C3);
+    background: -moz-linear-gradient(left, #45BF28, #1B83C3);
+    background: linear-gradient(left, #45BF28, #1B83C3);
+    color: #2B2C6A;
+    font-size: 22px;
+    transition: 0.5s all ease-in;
+}
+
+p {
+    text-align: center;
+    color: white;
+    margin-top: 100px;
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: lighter;
+    margin-top: 30px;
+}
+
+.link {
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: normal;
+    color: white;
+    font-size: 16px;
+}
+
+a:hover {
+    color:#45BF28;
+}
+
+.footer p {
+    width: 100%;
+    margin-top: 0px;
+}
+
+
+@media (min-width:1024px) {
+    .form {
+        width: 500px;
+    }
+}
