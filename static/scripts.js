@@ -13,7 +13,7 @@ function iniciar(){
                 success: function(data) {
                     $("#registros").html(data);
                 }
-        }); 
+        });
         url = '/faces/get'
         $.ajax({
                 url: url,
@@ -21,10 +21,27 @@ function iniciar(){
                 success: function(data) {
                     $("#faces").html(data);
                 }
-        }); 
-        
- 
+        });
 }
+//Funcion que actualiza el estado de camara
+function stcamara(){
+    $('#tablalistacam tbody tr').each(function(){
+        idcam = $(this).find('td:eq(11)').text();
+        orden = $(this).find('td:eq(0)').text();
+        url = '/estadodecamara/estado/'+idcam+'&'+orden;
+        console.log(url);
+        $.ajax({
+            url:url,
+            type:'GET',
+            success:function(data){
+                etiqueta ='#' + $(data).attr('id')
+                $(etiqueta).html(data)
+                console.log(data, etiqueta)
+            },
+        });
+    });
+}
+
 function detalleA(id){
     url = '/activity/get/'+id
         $.ajax({

@@ -39,3 +39,11 @@ Ingreso
 .form-control{
     font-size:12px;
 }
+
+.econexion, .eanalitica, .estreaming {
+    width:25px;
+    height:25px;
+    background-color: red;
+    /*border:1px solid grey;*/
+    border-radius:50%;
+}
