@@ -23,25 +23,55 @@ function iniciar(){
                 }
         });
 }
-//Funcion que actualiza el estado de camara
+//CONFIG00:Funcion que actualiza el estado de camara
 function stcamara(){
     $('#tablalistacam tbody tr').each(function(){
         idcam = $(this).find('td:eq(11)').text();
         orden = $(this).find('td:eq(0)').text();
         url = '/estadodecamara/estado/'+idcam+'&'+orden;
-        console.log(url);
+        //console.log(url);
         $.ajax({
             url:url,
             type:'GET',
             success:function(data){
                 etiqueta ='#' + $(data).attr('id')
                 $(etiqueta).html(data)
-                console.log(data, etiqueta)
+                //console.log(data, etiqueta)
             },
         });
     });
 }
+//CONFIG01:Gestión de streaming para configuracion
+function pruebas(id){
+    console.log(id);
+}
 
+var streamingmodalcamara;
+function startintervalstreaming(recipiente){
+        streamingmodalcamara = setInterval(function(){
+            viewstreamingcamara(recipiente)
+        }, 2000)
+}
+function stopintervalstreaming(){
+    clearInterval(streamingmodalcamara)
+}
+function viewstreamingcamara(id){
+    console.log(id)
+    url_video_feed = '/video_feed/'+id
+    url = 'http://127.0.0.1:8000/WEB_77TX8ds2du4GFiL/video_feed'
+    $.ajax({
+            url: url_video_feed,
+            type: 'GET',
+            Cache: false,
+        success: function(data){
+            //$('#modalstreaming').html(data);
+            $('#cajadeimagen').html(data)
+           // $('#modalstreamingcamara').modal('show');
+            //console.log(data);
+        }
+    });
+}
+ 
 function detalleA(id){
     url = '/activity/get/'+id
         $.ajax({

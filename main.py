@@ -1,10 +1,17 @@
+from time import time
 from flask_cors import CORS
 from flask import Flask
+from flask_caching import Cache
 from flask import render_template, request, redirect, url_for
 from flask import   make_response, Response, jsonify
+import requests
 import cv2
 from flask_sqlalchemy import SQLAlchemy
-
+from PIL import Image
+import imageio
+import binascii
+from io import BytesIO, StringIO
+from urllib.request import urlopen
 from sqlalchemy import text
 from sqlalchemy import create_engine
 import base64
@@ -14,7 +21,7 @@ import numpy as np
 import random
 from datetime import datetime
 from faker import Faker
-import requests
+#import requests
 import uuid
 import aiohttp
 import asyncio
@@ -22,6 +29,7 @@ import nest_asyncio
 from subprocess import check_output
 from datetime import datetime, timedelta
 from threading import Thread
+from sqlalchemy.engine import url
 
 from sqlalchemy.sql.elements import Null
 nest_asyncio.apply()
@@ -35,6 +43,7 @@ from utils.functions import *
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 server=app.config['SERVERML']
+
 #print(server)
 """
 INCIAL ESTRUCTURES
@@ -111,9 +120,18 @@ def estadolistacamara(data):
         scam = inf['STATUS_CAMERA']
         sser = inf['STATUS_SERVER_ML']
         strg = inf['STATUS_TEST']
-        return render_template("indicadorcam.html", camaraestado=scam, idcam=idcam)
+        return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
+                               camarastreaming=strg, idcam=idcam)
     except:
-        return render_template("indicadorcam.html", camaraestado=scam, idcam=idcam)
+        return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
+                               camarastreaming=strg, idcam=idcam)
+
+@app.route('/video_feed/<id>', methods=['GET', 'POST'])
+def streamingvideo_feed(id):
+    uuidstring = str(uuid.uuid4())
+    urlvideo_feed = app.config['STATUSRAY'] + 'WEB_' + id + '/video_feed?'+uuidstring
+    print(urlvideo_feed)
+    return render_template("viewestreaming.html", video_feed=urlvideo_feed)
 
 @app.route('/registro',methods=['POST'])
 def registro():
@@ -128,7 +146,7 @@ def registro():
         telefono = request.form['telefono']
         visitante_id=maxId('visitantes',db)
         query ="insert into visitantes values ("+ str(visitante_id) + ",'" + str(tipoid) + "','" +  str(id) + "','" + str(nombre) + "','" + str(correo) +"','" + str(empresa) +"','" + str(telefono) +"')"
-
+        
         sql = text(query)
         result = db.engine.execute(sql)
 
