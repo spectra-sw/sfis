@@ -1,9 +1,17 @@
+from time import time
 from flask_cors import CORS
 from flask import Flask
+from flask_caching import Cache
 from flask import render_template, request, redirect, url_for
 from flask import   make_response, Response, jsonify
+import requests
 import cv2
 from flask_sqlalchemy import SQLAlchemy
+from PIL import Image
+import imageio
+import binascii
+from io import BytesIO, StringIO
+from urllib.request import urlopen
 from sqlalchemy import text
 from sqlalchemy import create_engine
 import base64
@@ -13,6 +21,7 @@ import numpy as np
 import random
 from datetime import datetime
 from faker import Faker
+#import requests
 import uuid
 import aiohttp
 import asyncio
@@ -20,8 +29,10 @@ import nest_asyncio
 from subprocess import check_output
 from datetime import datetime, timedelta
 from threading import Thread
-nest_asyncio.apply()
+from sqlalchemy.engine import url
 
+from sqlalchemy.sql.elements import Null
+nest_asyncio.apply()
 
 from models.Zonas import *
 from models.Visitantes import *
@@ -29,20 +40,19 @@ from models.Camaras import *
 from models.Ingresos import *
 
 from utils.functions import *
-
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 server=app.config['SERVERML']
+
 #print(server)
 """
 INCIAL ESTRUCTURES
 """
-
 registros=[]
 registros2=[]
 db = SQLAlchemy(app)
 
-
+cam = []
 """
 ROUTES
 """
@@ -68,6 +78,61 @@ def ingreso2():
 def foto():
     capturar()
 
+@app.route('/camara/get/statuscamara', methods=['GET', 'POST'])
+#@app.route('/camaras', methods=['GET','POST'])
+def status():
+    cam = []
+    camaradb = getCamaras(db);
+    try:
+        for c in camaradb:
+            idcam = c[11]
+            urlstatusray = app.config['STATUSRAY'] + 'WEB_' + idcam + '/status'
+            r = requests.get(urlstatusray)
+            data = r.json()
+            inf  = data['Information']
+            scam = inf['STATUS_CAMERA']
+            sser = inf['STATUS_SERVER_ML']
+            strg = inf['STATUS_TEST']
+            status = [scam, sser, strg]
+            data = (c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8],
+                    c[9], c[10], c[11], scam, sser, strg)
+            cam.append(data)
+    except:
+        for c in camaradb:
+            data = (c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8],
+                    c[9], c[10], c[11], False, False, False)
+            cam.append(data)
+    listlencam = len(cam)
+    return render_template('camaras.html', titulo="SFIS", camaralist=cam, ncam=listlencam)
+
+@app.route('/estadodecamara/estado/<data>', methods=['GET', 'POST'])
+def estadolistacamara(data):
+    idcam = ""
+    data = str(data)
+    id, posicion = data.split('&')
+    scam, sser, strg = False, False, False
+    idcam = 'stcam'+posicion
+    try:
+        urlstatusray = app.config['STATUSRAY'] + 'WEB_' + id + '/status'
+        r = requests.get(urlstatusray)
+        data = r.json()
+        inf  = data['Information']
+        scam = inf['STATUS_CAMERA']
+        sser = inf['STATUS_SERVER_ML']
+        strg = inf['STATUS_TEST']
+        return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
+                               camarastreaming=strg, idcam=idcam)
+    except:
+        return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
+                               camarastreaming=strg, idcam=idcam)
+
+@app.route('/video_feed/<id>', methods=['GET', 'POST'])
+def streamingvideo_feed(id):
+    uuidstring = str(uuid.uuid4())
+    urlvideo_feed = app.config['STATUSRAY'] + 'WEB_' + id + '/video_feed?'+uuidstring
+    print(urlvideo_feed)
+    return render_template("viewestreaming.html", video_feed=urlvideo_feed)
+
 @app.route('/registro',methods=['POST'])
 def registro():
     if request.method == 'POST':
@@ -79,11 +144,8 @@ def registro():
         empresa = request.form['empresa']
         correo = request.form['correo']
         telefono = request.form['telefono']
-        
-        
         visitante_id=maxId('visitantes',db)
         query ="insert into visitantes values ("+ str(visitante_id) + ",'" + str(tipoid) + "','" +  str(id) + "','" + str(nombre) + "','" + str(correo) +"','" + str(empresa) +"','" + str(telefono) +"')"
-        #return query
         
         sql = text(query)
         result = db.engine.execute(sql)
@@ -117,12 +179,11 @@ def registro():
             'contacto' : request.form['contacto'],
             'motivo' : request.form['motivo'],
         }
-        
+
         registroIngreso(datosIngreso,db)
         registroRemoto(datos)
         return render_template('menu.html', titulo="SFIS")
         #return jsonify("Visitante creado")
-
 
 @app.route('/monitor')
 def monitor():
@@ -132,14 +193,10 @@ def monitor():
 def actividad():
     camaras = getCamaras(db)
     print(camaras)
-    
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
-    
-    #Thread(target=copyImages,daemon=True).start()
-
     return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
 @app.route('/rutas')
@@ -161,9 +218,6 @@ def activityd2(id):
 def activity():
     global registros
     global min
-     
-    #registros = fakerRegistros(registros)
-    
     registros=pruebafiltro()
     #print(registros)
     for r in registros:
@@ -181,29 +235,23 @@ def activity():
         filePhoto= 'static/activity/'+ r['title_uuid']+'.jpg'
         r['foto'] = r['title_uuid']+'.jpg'
         #jpg_original = base64.b64decode(r['title_imagen'])
-        
-        
         with open(filePhoto, 'wb') as f_output:
             f_output.write(jpg_original)
         '''
     #print(registros)
-    
+
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     print("Imagenes copiadas")
-    
     #Thread(target=copyImages,daemon=True).start()
     return render_template('registros.html', registros= registros)
-
-
 
 @app.route('/faces/get',methods=['GET'])
 def faces():
     print(len(registros))
-    return render_template('faces.html', faces= registros) 
-
+    return render_template('faces.html', faces= registros)
 
 @app.route('/ingresos',methods=['GET','POST'])
 def ingresos():
@@ -219,13 +267,8 @@ def ingresos():
         foto = str(row[1])+"a.jpg"
         ingresos[len(ingresos)-1].append(foto)
     print(ingresos)
-    '''
-    for i in ingresos:
-        nombre =getNombre(db,i[1])
-        i[1]=getNombre(db,nombre)
-    '''
-
     return render_template('ingresos.html', titulo="SFIS", ingresos=ingresos)
+
 @app.route('/personas',methods=['GET','POST'])
 def personas():
     query ="select * from visitantes order by id asc"
@@ -238,12 +281,6 @@ def personas():
         foto = str(row[0])+"a.jpg"
         visitantes[len(visitantes)-1].append(foto)
     print(visitantes)
-    '''
-    for i in ingresos:
-        nombre =getNombre(db,i[1])
-        i[1]=getNombre(db,nombre)
-    '''
-
     return render_template('personas.html', titulo="SFIS", visitantes=visitantes)
 
 @app.route('/zonas',methods=['GET','POST'])
@@ -255,9 +292,7 @@ def zonas():
 def camaras():
     camaras = getCamaras(db)
     zonas= getZonas(db)
-    return render_template('camaras.html', titulo="SFIS", camaras=camaras,zonas=zonas)
-
-
+    return render_template('camaras.html', titulo="SFIS",zonas=zonas, camaralist=camaras)
 
 @app.route('/pruebaregistro',methods=['GET','POST'])
 def pruebaregistro():
@@ -275,22 +310,21 @@ def buscarp():
         return  render_template('datosp.html',  datos=datos)
 
 @app.route('/activarcamara',methods=['POST'])
-def activarcamara():  
+def activarcamara():
     if request.method == 'POST':
-        id= request.form['id']  
-        parametros=request.form['parametros'] 
-        accion =request.form['accion'] 
-        #print(parametros) 
-        data=activar(server,id,db,parametros,accion)    
+        id= request.form['id']
+        parametros=request.form['parametros']
+        accion =request.form['accion']
+        #print(parametros)
+        data=activar(server,id,db,parametros,accion)
+        return str(data)
 
-        return str(data)    
 @app.route('/testcamara',methods=['POST'])
-def tcamara():  
+def tcamara():
     if request.method == 'POST':
-        id= request.form['id']  
+        id= request.form['id']
         res=testcamara(id,db)
-
-        return res   
+        return res
 
 @app.route('/guardarcamara',methods=['POST'])
 def gcamara():
@@ -299,18 +333,15 @@ def gcamara():
         data = request.form.to_dict()
         print(data)
         guardarCamara(data,db)
-    
     return 'Cámara creada'
-    
 
 def registroRemoto(datos):
-    async def querysyncro(urls, files): 
-        connector = aiohttp.TCPConnector(limit= None)    
-        async with aiohttp.ClientSession(connector= connector) as session:        
+    async def querysyncro(urls, files):
+        connector = aiohttp.TCPConnector()
+        async with aiohttp.ClientSession(connector= connector) as session:
             async with session.post(url= urls, data= files) as Respuesta:
-                #print(await Respuesta.text()) 
                 return await Respuesta.json()
-                
+
     from aiohttp import FormData
     import json
     urlregitro = server + 'REGISTRO'
@@ -338,8 +369,8 @@ def registroRemoto(datos):
         datas.add_field('image', img, filename='image.jpg', content_type= 'image/jpg')
         datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
         #SEND_> Solicitud Asincrona.
+        loop = asyncio.new_event_loop()
         try:
-            loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             task = querysyncro(urlregitro, datas)
             resp = loop.run_until_complete(task)
@@ -349,24 +380,20 @@ def registroRemoto(datos):
         finally:
             loop.close()
 
-
-
-        
-
-
 @app.route('/server',methods=['POST'])
 def initserver():
     data = request.form.to_dict()
     status = data['status']
+    DATA = ""
+    config = {}
     print(status)
     if status=="2":
-        try:           
+        try:
             command = 'bentoml serve-gunicorn FaceOnnx:latest'
             check_output(args=command, shell=True).decode('utf-8')
             DATA = 'SERVER ML STARTED'
         except:
                 DATA = 'SERVER ML RUNNING'
-
     else:
         if status == "1":
             config = {"STATUS": 'START'}
@@ -374,7 +401,7 @@ def initserver():
             config = {"STATUS": 'STOP'}
 
         if 'START' in config['STATUS']:
-            try:           
+            try:
                 command = 'ray start --head && serve start'
                 check_output(args=command, shell=True).decode('utf-8')
                 DATA = 'SERVER STARTED'
@@ -385,17 +412,16 @@ def initserver():
             check_output(args=command, shell=True).decode('utf-8')
             DATA = 'SERVER STOPPED'
 
-    return DATA  
-
+    return DATA
 
 @app.route('/pruebafiltro',methods=['GET','POST'])
 def pruebafiltro():
-    
-    async def querysyncro(urls, files): 
-        connector = aiohttp.TCPConnector(limit= None)    
-        async with aiohttp.ClientSession(connector= connector) as session:        
+
+    async def querysyncro(urls, files):
+        connector = aiohttp.TCPConnector()
+        async with aiohttp.ClientSession(connector= connector) as session:
             async with session.post(url= urls, data= files) as Respuesta:
-                #print(await Respuesta.text()) 
+                #print(await Respuesta.text())
                 return await Respuesta.json()
 
     from aiohttp import FormData
@@ -413,19 +439,18 @@ def pruebafiltro():
     fmin =(now-minutes).strftime("%Y-%m-%d %H:%M:%S")
     fmin = fmin[0:10]+"T"+fmin[11:]+"Z"
     print("Min"+fmin)
-    #fmin = "2021-08-27T14:30:10Z" 
+    #fmin = "2021-08-27T14:30:10Z"
 
     #fmin=fecha+"T"+str(hora)+":"+str(min)+":"+str(seg)+"Z"
     #print(fmin)
     #fmin ="now-30m"
     #fmax = "now"
-    
+
     now = datetime.now()
     fmax =now.strftime("%Y-%m-%d %H:%M:%S")
     fmax = fmax[0:10]+"T"+fmax[11:]+"Z"
     print("Max"+fmax)
-    
-    
+
     config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20, "search":"FECHA"}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
@@ -438,27 +463,21 @@ def pruebafiltro():
     asyncio.set_event_loop(loop)
     task = querysyncro(urlregitro, datas)
     resp = loop.run_until_complete(task)
-    #print(resp)
-    return resp  
-    
-    '''
 
-    return registros
+    return resp
 
-    '''
-    
 @app.route('/buscaract',methods=['GET','POST'])
 def buscaract():
     global registros2
+    resp = []
     data = request.form.to_dict()
     print(data)
-    
 
-    async def querysyncro(urls, files): 
-        connector = aiohttp.TCPConnector(limit= None)    
-        async with aiohttp.ClientSession(connector= connector) as session:        
+    async def querysyncro(urls, files):
+        connector = aiohttp.TCPConnector()
+        async with aiohttp.ClientSession(connector= connector) as session:
             async with session.post(url= urls, data= files) as Respuesta:
-                #print(await Respuesta.text()) 
+                #print(await Respuesta.text())
                 return await Respuesta.json()
 
     from aiohttp import FormData
@@ -467,13 +486,13 @@ def buscaract():
     host = "localhost"
     port = 9200
     indexread = "activity"
-   
+
     minutes = timedelta(minutes=10)
     now = datetime.now()
     fmin =data['desde']
     fmin = fmin+"Z"
     print("Min"+fmin)
-    
+
     now = datetime.now()
     fmax =data['hasta']
     fmax = fmax+"Z"
@@ -483,14 +502,12 @@ def buscaract():
     if data['cc'] !='':
         CC = data['cc']
         search = "FECHA&CC"
-    
+
     if data['cam'] !='':
         search="CAMDATE"
         if data['cc'] !='':
             search = "CAMDATEDOC"
-    
-    
-    
+
     config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 1000, "search":search , 'CC':data['cc'], 'cam':data['cam']}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
@@ -499,36 +516,29 @@ def buscaract():
     datas = FormData()
     datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
     #SEND_> Solicitud Asincrona.
+    loop = asyncio.new_event_loop()
     try:
-        loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         task = querysyncro(urlregitro, datas)
         resp = loop.run_until_complete(task)
-        print(resp) 
+        print(resp)
     except:
         pass
     finally:
         loop.close()
-
-    
-    #return resp 
+    #return resp
     registros2 = resp
-
     for r in registros2:
         if r['title_authorization']==False:
             r['clase'] = "table-danger"
         if r['title_authorization']==True:
             r['clase'] = "table-success"
-        
+
         r['foto'] = r['title_face_uuid']
         r['env'] = r['title_imagen_uuid']
         zona = getZonaCamara(r['title_idcam'],db)
         r['zona'] = zona
-
-    return render_template('registros2.html', registros= registros2) 
-
-    
-    
+    return render_template('registros2.html', registros= registros2)
 
 if __name__=="__main__":
     #print(app.config)
@@ -537,9 +547,4 @@ if __name__=="__main__":
         DATA = check_output(commandadd, shell=True).decode('utf-8')
         commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-  
-
     app.run(host=app.config['HOST'],port=app.config['PORT'])
-   
-    
-    
