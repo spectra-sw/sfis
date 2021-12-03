@@ -1,4 +1,4 @@
-{% extends 'menuTemplate2.html' %}
+{% extends 'menuTemplate3.html' %}
 {% block content %}    
 <br><br>
     <div class="container">
@@ -8,7 +8,7 @@
                     <div class="card-header"></div>
                     <div class="card-body">
                         <div class="row">
-                            
+                         
                             
                             <div class="col-2">
                                 <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Crear Cámara</button>
@@ -21,7 +21,7 @@
         <br>
         <div class="row" style="background-color: white;">
             <br><br>
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-tabs mt-2 ml-2" >
                 <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#generales">Datos Generales</a>
                 </li>
@@ -33,11 +33,13 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane container active" id="generales">
-                    <div class="col-12">
-                        <br><br>
-                        <table class="table table-bordered table-stripped table-sm table-responsive" style="font-weight: 10px;">
+                    <div>
+                        <table class="mt-2 table table-sm table-hover 
+                            table-sm table-responsive text-center" id="tablalistacam"
+                            style="font-weight: 10px;">
                             <thead>
                                 <tr class="table-success">
+                                    <th></th> 
                                     <th>Nombre</th>
                                     <th>Referencia</th>
                                     <th>Marca</th>
@@ -49,12 +51,19 @@
                                     <th>Usuario</th>
                                     <th>Password</th>
                                     <th>UUID</th>
-                                    <th></th>
-                                  </tr>
+                                    <th colspan="3">
+                                        <div class="d-flex justify-content-around">
+                                            <span class="ml-1 mr-1"> CAM </span>
+                                            <span class="ml-1 mr-1"> SML </span>
+                                            <span class="ml-1 mr-1"> STG<span>
+                                        </div>
+                                    </th>
+                                    <th colspan="2" id="estado">Gestión</th>
                             </thead>
                             <tbody>
-                                {% for camara in camaras %}
-                                  <tr  class="table-default">
+                                {% for camara in camaralist %}
+                                  <tr>
+                                    <td>{{camara[0]}}</td>
                                     <td>{{camara[1]}}</td>
                                     <td>{{camara[2]}}</td>
                                     <td>{{camara[3]}}</td>
@@ -66,44 +75,155 @@
                                     <td>{{camara[9]}}</td>
                                     <td>{{camara[10]}}</td>
                                     <td>{{camara[11]}}</td>
-                                    <td><button class="btn btn-warning btn-sm" > <i class="fa fa-fw fa-pencil"></i></button></td>
-                                    <td><button class="btn btn-danger btn-sm" > <i class="fa fa-fw fa-trash"></i></button></td>
-                                  </tr>
+                                    <td colspan="3">
+                                        <div class="d-flex justify-content-around" id="stcam{{ camara[0] }}" >
+                                            <i class="bi bi-question-circle-fill" style="color:red;
+                                            font-size:18px;"></i>
+                                            <i class="bi bi-question-circle-fill" style="color:red;
+                                            font-size:18px;"></i>
+                                            <i class="bi bi-question-circle-fill" style="color:red;
+                                            font-size:18px;"></i>
+                                        </div>
+                                    </td>
+                                    <td><button class="btn btn-warning btn-sm" style="padding-bottom:0px; padding-top:1px"> 
+                                            <i class="fa fa-fw fa-pencil" style="font-size:15px;"></i>
+                                        </button>
+                                    </td>
+                                    <td><button class="btn btn-danger btn-sm" style="padding-bottom:0px; padding-top:1px"> 
+                                            <i class="fa fa-fw fa-trash" style="font-size:15px;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
                                 {% endfor %}
                               </tbody>
                         </table>
-                        <br><br>
                     </div>
                 </div>
                 <div class="tab-pane container fade" id="servicios">
                     <div class="row">
                         <div class="col-8">
                             <br><br>
-                            <button class="btn btn-primary" onclick="server(2)">Server ML</button>
-                            <button class="btn btn-primary" onclick="server(1)">Iniciar Server</button>
-                            <button class="btn btn-danger" onclick="server(0)">Parar Server</button>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-primary" style="font-weight:bold; font-size: 12px;" onclick="server(2)">Server ML</button>
+                                    <button class="btn btn-info" style="font-weight:bold; font-size: 12px;" onclick="server(1)">Iniciar Server</button>
+                                    <button class="btn btn-danger"  style="font-weight:bold; font-size: 12px;" onclick="server(0)">Parar Server</button>
+                                </div>
                             <br><br>
-                            <table class="table table-bordered table-stripped  table-responsive" style="font-weight: 10px;">
+                            <table class="table table-sm table-hover table-stripped  table-responsive" style="font-weight: 10px;">
                                 <thead>
                                     <tr class="table-success">
                                         <th>Nombre</th>
-                                        <th>Estado</th>
-                                        
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for camara in camaras %}
+                                    {% for camara in camaralist %}
                                     <tr  class="table-default">
                                         <td>{{camara[1]}}</td>
-                                        <td></td>
-                                        <td><button class="btn btn-success btn-sm" id ="{{camara[0]}}" onclick="camara(this.id,1)"> <i class="fa fa-fw fa-toggle-on"></i></button></td>
-                                        <td><button class="btn btn-danger btn-sm" id={{camara[0]}} onclick="camara(this.id,0)"> <i class="fa fa-fw fa-power-off "></i></button></td>
-                                        <td><button class="btn btn-warning btn-sm" id={{camara[0]}} onclick="testcamara(this.id)">Test</button></td>
-                                    </tr>
+                                        <td><button class="btn btn-success btn-sm" style="padding-bottom:1px; font-size: 12px;" id ="{{camara[0]}}" onclick="camara(this.id,1)"> 
+                                                <i class="fa fa-fw fa-toggle-on"></i>
+                                            </button>
+                                        </td>
+                                        <td><button class="btn btn-danger btn-sm"  style="padding-bottom:1px; font-size: 12px;" id={{camara[0]}} onclick="camara(this.id,0)"> 
+                                                <i class="fa fa-fw fa-power-off "></i>
+                                            </button>
+                                        </td>
+                                        <td><button class="btn btn-warning btn-sm"  style="font-size: 10px; font-weight: bold;" id={{camara[0]}} onclick="testcamara(this.id)">
+                                                Test 
+                                            </button>
+                                        </td>                                        
+                                        <td><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;" data-id="{{camara[0]}}" data-whathever="{{ camara[11] }}">Streaming</button></td>
+                                    </tr> 
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            <div class="modal" id="modalstreamingcamara" tabindex="-1" aria-labelledby="streamingmodal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                <div class="modal-dialog modal-xl" style="border:none">
+                                    <script type="text/javascript">
+                                        $('#modalstreamingcamara').on('show.bs.modal', function(event){
+                                            var button = $(event.relatedTarget);
+                                            var recipiente = button.data('whathever');
+                                            var dataid = button.data('id');
+                                            $("#activar").attr("name", dataid);
+                                            startintervalstreaming(recipiente);
+                                        });
+                                    </script>
+                                    <div class="modal-content" style=" height: 90vh;">
+                                        <div class="modal-header" style="border:none;">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <h5 class="modal-title" id="exampleModalLabel">CAMARA: {{ camaramodal }}</h5>
+                                                </div>
+                                                <div class="row" style="width: 100%;">
+                                                    <small style="font-weight: bold"> IP: {{ camaramodal }} </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body" id="modalstreaming" style="padding: 0px; background-color: black; border: none;">
+                                            <div class="row no-gutters w-100 h-100" style="border: none;">
+                                                <div class="col-10 h-100 w-100" id="cajadeimagen">
+                                            
+                                                </div>
+                                                <div class="col-2 h-100 w-100" style="background-color: white; padding-left: 1px; padding-right: 1px; border-color: white; ">
+                                                    <table class="table table-borderless table-stripped  table-responsive" style="font-weight: 10px;">
+                                                        <thead>
+                                                            <tr class="table-success">
+                                                                <th>Parámetro</th>
+                                                                <th>Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                        fⅹame                            <form id="parametros">
+                                                                <tr>
+                                                                    <td>Tiempo de Captura</td>
+                                                                    <td><input type="text input-sm" value="0.5" class="form-control" name="timeml" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Angulo horizontal del rostro</td>
+                                                                    <td><input type="text input-sm" value="15.0" class="form-control" name="thrcw" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Angulo vertical del rostro</td>
+                                                                    <td><input type="text" value="15.0" class="form-control" name="thrch" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr  class="table-default">
+                                                                    <td>Tamaño minimo de capturar</td>
+                                                                    <td><input type="text" value="40" class="form-control" name="sizeface" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr  class="table-default">
+                                                                    <td>Probabilidad del Rostro</td>
+                                                                    <td><input type="text" value="0.80" class="form-control" name="thr" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr  class="table-default">
+                                                                    <td>Calificación minima de reconocimiento</td>
+                                                                    <td><input type="text" value="70" class="form-control" name="thrperson" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                                <tr  class="table-default">
+                                                                    <td>Calificacion minima para desconocidos</td>
+                                                                    <td><input type="text" value="40" class="form-control" name="thrminperson" style="padding: 1px; text-align: center;"> </td>
+                                                                </tr>
+                                                            </form> 
+                                                        </tbody>
+                                                    </table>
+                                                    <hr>
+                                                    <button class="btn btn-success btn-sm mb-1" id="activar" name="" style="font-size: 12px; width: 100%; font-weight: bold;" 
+                                                        onclick="camara(this.name, 1)">
+                                                        ACTIVAR
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm mb-1" style="font-size: 12px; width: 100%; font-weight: bold;" onclick="camara(this.name, 0)"> 
+                                                        APAGAR
+                                                    </button>
+                                                    <!--button class="btn btn-warning btn-sm mb-1" style="font-size: 12px; width: 100%; font-weight: bold;" onclick="camara(this.name, 1)"> 
+                                                        CONFIGURAR
+                                                    </button-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer" style="border:none">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id='closemodalstr' onclick="stopintervalstreaming()">Close</button>
+                                         </div>
+                                    </div>
+                                 </div>
+                            </div>
                             <br><br>
                         </div>
                         <div class="col-4">
@@ -119,19 +239,11 @@
                                     <form id="parametros">   
                                         <tr  class="table-default">
                                             <td>Time ml</td>
-                                            <td><input type="text" value="0.5" class="form-control" name="timeml"> </td>
+                                            <td><input type="text input-sm" value="0.5" class="form-control" name="timeml"> </td>
                                         </tr>
-                                        <!--<tr  class="table-default">
-                                            <td>N replica</td>
-                                            <td><input type="text" value="1" class="form-control" name="nreplica"> </td>
-                                        </tr>
-                                        <tr  class="table-default">
-                                            <td>Sizeread</td>
-                                            <td><input type="text" value="1" class="form-control" name="sizeread"> </td>
-                                        </tr>-->
                                         <tr  class="table-default">
                                             <td>Ángulo horizontal</td>
-                                            <td><input type="text" value="15.0" class="form-control" name="thrcw"> </td>
+                                            <td><input type="text input-sm" value="15.0" class="form-control" name="thrcw"> </td>
                                         </tr>
                                         <tr  class="table-default">
                                             <td>Ángulo vertical</td>
@@ -160,12 +272,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
-            
         </div>
     </div>
     <!-- The Modal -->

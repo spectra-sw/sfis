@@ -3,7 +3,6 @@ generales
 */
 body {
     background-color: black;
-    font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
 }
 .grisc{
@@ -19,7 +18,6 @@ body {
     font-weight: bold;
     font-size:16px;
 }
-
 /*
 login
 */
@@ -39,3 +37,4 @@ Ingreso
 .form-control{
     font-size:12px;
 }
+
