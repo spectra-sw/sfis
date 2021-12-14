@@ -1,10 +1,12 @@
 from time import time
 from flask_cors import CORS
 from flask import Flask
-from flask_caching import Cache
 from flask import render_template, request, redirect, url_for
 from flask import   make_response, Response, jsonify
 import requests
+
+import urllib.request
+
 import cv2
 from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
@@ -60,8 +62,7 @@ ROUTES
 @app.route('/')
 def inicio():
     return render_template('logind.html', titulo="SFIS")
-
-@app.route('/inicio',methods=['GET','POST'])
+@app.route('/inicio', methods=['GET', 'POST'])
 def minicio():
     return render_template('iniciod.html', titulo="SFIS")
 
@@ -128,10 +129,43 @@ def estadolistacamara(data):
 
 @app.route('/video_feed/<id>', methods=['GET', 'POST'])
 def streamingvideo_feed(id):
-    uuidstring = str(uuid.uuid4())
-    urlvideo_feed = app.config['STATUSRAY'] + 'WEB_' + id + '/video_feed?'+uuidstring
+    urlvideo_feed = '/streamingvideo/' + id+'?'+str(uuid.uuid4())
     print(urlvideo_feed)
     return render_template("viewestreaming.html", video_feed=urlvideo_feed)
+
+@app.route('/streamingvideo/<id>', methods=['GET', 'POST'])
+def streamingtest(id):
+    url = app.config['STATUSRAY'] + 'WEB_' + id +  '/video_feed?'+str(uuid.uuid4())
+    resp = requests.get(url, stream=True).raw
+    return Response(resp, mimetype='image/png')
+
+versetid=""
+def get_frame():
+    try:
+        url = app.config['STATUSRAY']+'WEB_'+varsetid+'/video_feed?'+str(uuid.uuid4())
+        with urllib.request.urlopen(url) as url:
+            img = url.read()
+            return img
+    except:
+        video = np.zeros([200, 300, 3], np.uint8)
+        img = cv2.imencode(".jpg", video)[1].tobytes()
+        return img
+
+@app.route("/setid/<id>")
+def setid(id):
+    global varsetid
+    varsetid =id
+    return varsetid
+
+def gen():
+    while True:
+        frame = get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.route("/video_streaming")
+def video_feed_camara():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/registro',methods=['POST'])
 def registro():
@@ -547,4 +581,4 @@ if __name__=="__main__":
         DATA = check_output(commandadd, shell=True).decode('utf-8')
         commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-    app.run(host=app.config['HOST'],port=app.config['PORT'])
+    app.run(host=app.config['HOST'],port=app.config['PORT'], threaded=True)

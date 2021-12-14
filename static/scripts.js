@@ -50,24 +50,45 @@ var streamingmodalcamara;
 function startintervalstreaming(recipiente){
         streamingmodalcamara = setInterval(function(){
             viewstreamingcamara(recipiente)
-        }, 2000)
+        }, 200)
 }
-function stopintervalstreaming(){
-    clearInterval(streamingmodalcamara)
+function stopviewstreamingcamara(id){
+    url_serve_camara = 'http://127.0.0.1:8000/WEB_'+id+'/calibration/0';
+    $.ajax({
+        url: url_serve_camara,
+        type: 'GET',
+        success:function(calibration) {
+           console.log(calibration); 
+        }
+    });
 }
 function viewstreamingcamara(id){
-    console.log(id)
-    url_video_feed = '/video_feed/'+id
-    url = 'http://127.0.0.1:8000/WEB_77TX8ds2du4GFiL/video_feed'
+    url_video_feed = '/setid/'+id
+    url_serve_camara = 'http://127.0.0.1:8000/WEB_'+id+'/calibration/1';
     $.ajax({
-            url: url_video_feed,
-            type: 'GET',
-            Cache: false,
-        success: function(data){
-            //$('#modalstreaming').html(data);
-            $('#cajadeimagen').html(data)
-           // $('#modalstreamingcamara').modal('show');
-            //console.log(data);
+        url: url_video_feed,
+        type: 'GET',
+        success: function(id){
+            console.log(id);
+        } 
+    });
+    $.ajax({
+        url: url_serve_camara,
+        type: 'GET',
+        success:function(calibration) {
+            console.log(calibration);
+            
+        }
+    });
+}
+function viewtest(recipiente){
+    url = 'http://127.0.0.1:8000/WEB_'+recipiente+'/video_feed'
+    console.log(url)
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success:function(data){
+
         }
     });
 }

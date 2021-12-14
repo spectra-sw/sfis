@@ -131,9 +131,7 @@
                                                 Test 
                                             </button>
                                         </td>                                        
-                                        <td><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;" 
-                                            data-id="{{camara[0]}}" data-whathever="{{ camara[11] }}" data-name="{{ camara[1] }}" data-ip="{{camara[5]}}"
-                                            data-zona="{{camara[6]}}">Streaming</button></td>
+                                        <td><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;" data-id="{{camara[0]}}" data-whathever="{{ camara[11] }}">Streaming</button></td>
                                     </tr> 
                                     {% endfor %}
                                 </tbody>
@@ -146,38 +144,26 @@
                                             var recipiente = button.data('whathever');
                                             var dataid = button.data('id');
                                             $("#activar").attr("name", dataid);
-                                            $("#stopstreaming").attr("name",recipiente);
-                                            viewstreamingcamara(recipiente);
-                                            
-                                            var nombrecamara = button.data('name');
-                                            var ipcamara = button.data('ip');
-                                            var zonacamara = button.data('zona');
-                                            
-                                            $("#nombrecamara").text("CAMARA: "+nombrecamara);
-                                            $("#ipcamara").text("IP: "+ipcamara);
-                                            $("#zonacamara").text("ZONA: "+zonacamara);
+                                            startintervalstreaming(recipiente);
                                         });
                                     </script>
-                                    <div class="modal-content" style="height: 90vh;">
+                                    <div class="modal-content" style=" height: 90vh;">
                                         <div class="modal-header" style="border:none;">
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <h5 class="modal-title" id="nombrecamara" name="" style="font-weight:bold;">CAMARA:</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel">CAMARA: {{ camaramodal }}</h5>
                                                 </div>
-                                                <div class="row">
-                                                    <h5 class="modal-title" id="zonacamara" name="" style="font-weight:bold;">ZONA:</h5>
-                                                </div> 
                                                 <div class="row" style="width: 100%;">
-                                                    <small style="font-weight: bold" id="ipcamara" name="" style="font-weight: bold;"> IP:</small>
+                                                    <small style="font-weight: bold"> IP: {{ camaramodal }} </small>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal-body" id="modalstreaming" style="padding: 0px; background-color: white; border: none;">
-                                            <div class="row no-gutters" style="border: none; min-width:100%;">
-                                                <div class="col-10 h-100 w-100">
-                                                    <img src="{{ url_for('video_feed_camara') }}" alt="" style="width: 50vw;">
+                                        <div class="modal-body" id="modalstreaming" style="padding: 0px; background-color: black; border: none;">
+                                            <div class="row no-gutters w-100 h-100" style="border: none;">
+                                                <div class="col-10 h-100 w-100" id="cajadeimagen">
+                                                    <img src="{{url_for( 'video_feed/77TX8ds2du4GFiL' )}}"
                                                 </div>
-                                                <div class="col-2" style="background-color: white; padding-left: 1px; padding-right: 1px; border-color: white; min-height:100%;">
+                                                <div class="col-2 h-100 w-100" style="background-color: white; padding-left: 1px; padding-right: 1px; border-color: white; ">
                                                     <table class="table table-borderless table-stripped  table-responsive" style="font-weight: 10px;">
                                                         <thead>
                                                             <tr class="table-success">
@@ -221,7 +207,7 @@
                                                     <hr>
                                                     <button class="btn btn-success btn-sm mb-1" id="activar" name="" style="font-size: 12px; width: 100%; font-weight: bold;" 
                                                         onclick="camara(this.name, 1)">
-                                                        ACTUALIZAR
+                                                        ACTIVAR
                                                     </button>
                                                     <button class="btn btn-danger btn-sm mb-1" style="font-size: 12px; width: 100%; font-weight: bold;" onclick="camara(this.name, 0)"> 
                                                         APAGAR
@@ -233,7 +219,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer" style="border:none">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id='stopstreaming' name=""  onclick="stopviewstreamingcamara(this.name)">Cerrar</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" id='closemodalstr' onclick="stopintervalstreaming()">Close</button>
                                          </div>
                                     </div>
                                  </div>
