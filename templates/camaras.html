@@ -127,10 +127,10 @@
                                                 <i class="fa fa-fw fa-power-off "></i>
                                             </button>
                                         </td>
-                                        <td><button class="btn btn-warning btn-sm"  style="font-size: 10px; font-weight: bold;" id={{camara[0]}} onclick="testcamara(this.id)">
+                                        <!--td><button class="btn btn-warning btn-sm"  style="font-size: 10px; font-weight: bold;" id={{camara[0]}} onclick="testcamara(this.id)">
                                                 Test 
                                             </button>
-                                        </td>                                        
+                                        </td-->
                                         <td><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;" 
                                             data-id="{{camara[0]}}" data-whathever="{{ camara[11] }}" data-name="{{ camara[1] }}" data-ip="{{camara[5]}}"
                                             data-zona="{{camara[6]}}">Streaming</button></td>
@@ -145,7 +145,8 @@
                                             var button = $(event.relatedTarget);
                                             var recipiente = button.data('whathever');
                                             var dataid = button.data('id');
-                                            $("#activar").attr("name", dataid);
+                                            var dataname = dataid+'&'+recipiente;
+                                            $("#activar").attr("name", dataname);
                                             $("#stopstreaming").attr("name",recipiente);
                                             viewstreamingcamara(recipiente);
                                             
@@ -186,7 +187,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <form id="parametros">
+                                                            <form id="actualizacionparametros">
                                                                 <tr>
                                                                     <td>Tiempo de Captura</td>
                                                                     <td><input type="text input-sm" value="0.5" class="form-control" name="timeml" style="padding: 1px; text-align: center;"> </td>
@@ -219,16 +220,10 @@
                                                         </tbody>
                                                     </table>
                                                     <hr>
-                                                    <button class="btn btn-success btn-sm mb-1" id="activar" name="" style="font-size: 12px; width: 100%; font-weight: bold;" 
-                                                        onclick="camara(this.name, 1)">
+                                                    <button class="btn btn-success btn-sm mb-1" id="activar" name="" data-uuid="" style="font-size: 12px; width: 100%; font-weight: bold;" 
+                                                        onclick="camaractualizar(this.name, 1)">
                                                         ACTUALIZAR
                                                     </button>
-                                                    <button class="btn btn-danger btn-sm mb-1" style="font-size: 12px; width: 100%; font-weight: bold;" onclick="camara(this.name, 0)"> 
-                                                        APAGAR
-                                                    </button>
-                                                    <!--button class="btn btn-warning btn-sm mb-1" style="font-size: 12px; width: 100%; font-weight: bold;" onclick="camara(this.name, 1)"> 
-                                                        CONFIGURAR
-                                                    </button-->
                                                 </div>
                                             </div>
                                         </div>

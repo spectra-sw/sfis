@@ -53,7 +53,7 @@ function startintervalstreaming(recipiente){
         }, 200)
 }
 function stopviewstreamingcamara(id){
-    url_serve_camara = 'http://127.0.0.1:8000/WEB_'+id+'/calibration/0';
+    url_serve_camara = '/activar/'+id+'/0';
     $.ajax({
         url: url_serve_camara,
         type: 'GET',
@@ -64,7 +64,7 @@ function stopviewstreamingcamara(id){
 }
 function viewstreamingcamara(id){
     url_video_feed = '/setid/'+id
-    url_serve_camara = 'http://127.0.0.1:8000/WEB_'+id+'/calibration/1';
+    url_serve_camara = '/activar/'+id+'/1';
     $.ajax({
         url: url_video_feed,
         type: 'GET',
@@ -134,9 +134,36 @@ function buscarp(){
                     console.log(error);
                 }
         }); 
-
-       
 }
+
+function camaractualizar(id, accion){
+    var arrayname = id.split("&")
+    var id = arrayname[0];
+    var uuid = arrayname[1];
+    url = '/updatecamara'
+    url_serve_camara = '/activar/'+uuid+'/1';
+    console.log(id);
+    parametros = $( "#actualizacionparametros" ).serialize(); 
+    datos ={ id:id, parametros:parametros, accion: accion}
+    $.ajax({
+            url: url,
+            data: datos,
+            type:'POST',
+            success: function(data) {
+                $.ajax({
+                    url: url_serve_camara,
+                    type: 'GET',
+                    success:function(calibration) {
+                        console.log(calibration); 
+                    }
+                });
+            },
+            error: function(error) {
+                console.log(error);
+            }
+    }); 
+}
+
 function camara(id,accion){
     url = '/activarcamara'
     parametros = $( "#parametros" ).serialize(); 

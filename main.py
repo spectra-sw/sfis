@@ -139,7 +139,15 @@ def streamingtest(id):
     resp = requests.get(url, stream=True).raw
     return Response(resp, mimetype='image/png')
 
+# [streaming] funciones de gestión de streaming de video con el servicio de camaras.
 versetid=""
+@app.route('/activar/<setid>/<status>')
+def activarstreaming(setid, status):
+    url_calibration = app.config['STATUSRAY']+'WEB_'+setid+'/calibration/'+status 
+    with urllib.request.urlopen(url_calibration) as url: 
+        status = url.read()
+        return status
+
 def get_frame():
     try:
         url = app.config['STATUSRAY']+'WEB_'+varsetid+'/video_feed?'+str(uuid.uuid4())
@@ -162,6 +170,7 @@ def gen():
         frame = get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+#[end streaming]
 
 @app.route("/video_streaming")
 def video_feed_camara():
@@ -342,6 +351,15 @@ def buscarp():
         datos=getDatosVisitante(tipoid,id,db)
         print(datos)
         return  render_template('datosp.html',  datos=datos)
+
+@app.route('/updatecamara',methods=['POST'])
+def updatecamara():
+    if request.method == 'POST':
+        id= request.form['id']
+        parametros=request.form['parametros']
+        accion =request.form['accion']
+        data=activar(server,id,db,parametros,accion)
+        return str(data)
 
 @app.route('/activarcamara',methods=['POST'])
 def activarcamara():
