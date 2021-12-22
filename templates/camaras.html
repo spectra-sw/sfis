@@ -103,11 +103,41 @@
                     <div class="row">
                         <div class="col-8">
                             <br><br>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-primary" style="font-weight:bold; font-size: 12px;" onclick="server(2)">Server ML</button>
-                                    <button class="btn btn-info" style="font-weight:bold; font-size: 12px;" onclick="server(1)">Iniciar Server</button>
-                                    <button class="btn btn-danger"  style="font-weight:bold; font-size: 12px;" onclick="server(0)">Parar Server</button>
-                                </div>
+                            <table class="table table-sm table-stripped table-responsive">
+                                <thead>
+                                    <tr class="table table-sm table-secondary">
+                                        <td class="badge badge-light">SERVICIOS</td>
+                                    </tr>
+                                </head>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-sm btn-light" style="font-weight:bold; font-size: 12px;" onclick="server(2)">
+                                                    S-Analitíca
+                                                    <h5> <span class="badge badge-light badge-pill"  id="SDA"  style="font-weight: bold;">**</span></h5>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-sm btn-light" style="font-weight:bold; font-size: 12px;" onclick="server(1)">
+                                                    S-Cámara
+                                                    <h5> <span class="badge badge-light badge-pill"  id="SCA"  style="font-weight: bold;">**</span></h5>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-sm btn-light" style="font-weight:bold; font-size: 12px;" onclick="server(0)">
+                                                    S-Datos
+                                                    <h5> <span class="badge badge-light badge-pill"  id="SAN"  style="font-weight: bold;">**</span></h5>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <br><br>
                             <table class="table table-sm table-hover table-stripped  table-responsive" style="font-weight: 10px;">
                                 <thead>
@@ -119,21 +149,23 @@
                                     {% for camara in camaralist %}
                                     <tr  class="table-default">
                                         <td>{{camara[1]}}</td>
-                                        <td><button class="btn btn-success btn-sm" style="padding-bottom:1px; font-size: 12px;" id ="{{camara[0]}}" onclick="camara(this.id,1)"> 
-                                                <i class="fa fa-fw fa-toggle-on"></i>
-                                            </button>
+                                        <td>
+                                            <div class="btn-group" role="group" id="ctrlcamara">
+                                                <button class="btn btn-success btn-sm" style="padding-bottom:1px; font-size: 12px;" id ="{{camara[0]}}" onclick="camara(this.id,1)" disabled="disabled">
+                                                    <i class="fa fa-fw fa-toggle-on"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm"  style="padding-bottom:1px; font-size: 12px;" id={{camara[0]}} onclick="camara(this.id,0)" disabled="disabled">
+                                                    <i class="fa fa-fw fa-power-off "></i>
+                                                </button>
+                                            </div>
                                         </td>
-                                        <td><button class="btn btn-danger btn-sm"  style="padding-bottom:1px; font-size: 12px;" id={{camara[0]}} onclick="camara(this.id,0)"> 
-                                                <i class="fa fa-fw fa-power-off "></i>
-                                            </button>
-                                        </td>
-                                        <!--td><button class="btn btn-warning btn-sm"  style="font-size: 10px; font-weight: bold;" id={{camara[0]}} onclick="testcamara(this.id)">
-                                                Test 
-                                            </button>
-                                        </td-->
-                                        <td><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;" 
+                                        <td><button class="btn btn-sm btn-primary" id="strg{{ camara[11] }}" data-toggle="modal" data-target="#modalstreamingcamara" style="font-size: 10px; font-weight: bold;"
                                             data-id="{{camara[0]}}" data-whathever="{{ camara[11] }}" data-name="{{ camara[1] }}" data-ip="{{camara[5]}}"
-                                            data-zona="{{camara[6]}}">Streaming</button></td>
+                                            data-zona="{{camara[6]}}" disabled="disabled">Streaming</button>
+                                        </td>
+                                        <td>
+                                            <h6><div class="badge badge-light badge-pill" id="stt{{ camara[11] }}">**</div></h6>
+                                        </td>
                                     </tr> 
                                     {% endfor %}
                                 </tbody>

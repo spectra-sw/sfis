@@ -34,11 +34,61 @@ function stcamara(){
             url:url,
             type:'GET',
             success:function(data){
+                //Estado de camaras en datos generales
                 etiqueta ='#' + $(data).attr('id')
                 $(etiqueta).html(data)
-                //console.log(data, etiqueta)
+                //Estado de camaras en servicios
+                id = $(data).attr("data-id");
+                status = $(data).attr('data-status');
+                stt = '#stt'+id;
+                strg = '#strg'+id;
+                if(status == "True"){
+                    $(stt).text("On");
+                    $(stt).attr('style', 'color:white; background-color:green')
+                    $(strg).removeAttr('disabled', true);
+                }else{
+                    $(stt).text("Off");
+                    $(stt).attr('style', 'color:white; background-color:red')
+                    $(strg).attr('disabled', 'disabled');
+                }; 
             },
         });
+    });
+    url_serve = '/estadoserve';
+    $.ajax({
+        url: url_serve,
+        type: 'GET',
+        success:function(data) {
+            var Ray=data['Ray'];
+            var Bento=data['Bento'];
+            var Elastic=data['ElasticSearch'];
+            $('#SDA').text(Bento);
+            if(Bento=='On'){
+                $('#SDA').attr('style', 'color:white; background-color:green')
+            }else{
+                $('#SDA').attr('style', 'color:white; background-color:red')
+            }
+            $('#SCA').text(Ray);
+            if(Ray=='On'){
+                $('#SCA').attr('style', 'color:white; background-color:green');
+                $('#ctrlcamara button').removeAttr('disabled', true);
+            }else{
+                $('#SCA').attr('style', 'color:white; background-color:red');
+                $('#ctrlcamara button').attr('disabled', 'disabled');
+            }
+            $('#SAN').text(Elastic);
+            if(Elastic=='On'){
+                $('#SAN').attr('style', 'color:white; background-color:green')
+            }else{
+                $('#SAN').attr('style', 'color:white; background-color:red')
+            }
+            //console.log(Ray, Bento, Elastic);
+        },
+        error: function(data) {
+            $('#SDA').text("**");
+            $('#SCA').text("**");
+            $('#SAN').text("**");
+        }
     });
 }
 //CONFIG01:Gestión de streaming para configuracion
@@ -135,7 +185,7 @@ function buscarp(){
                 }
         }); 
 }
-
+//Actualización de camaras cuando se visualiza el streaming del video
 function camaractualizar(id, accion){
     var arrayname = id.split("&")
     var id = arrayname[0];
@@ -222,7 +272,8 @@ function guardarCamara(){
 }
 function server(status){
     data ={status : status}
-    url="/server";
+    //url="/server";
+    url = "/servicios"
     $.ajax({
         url: url,
         data: data,

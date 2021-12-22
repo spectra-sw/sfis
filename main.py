@@ -6,6 +6,7 @@ from flask import   make_response, Response, jsonify
 import requests
 
 import urllib.request
+import urllib.error
 
 import cv2
 from flask_sqlalchemy import SQLAlchemy
@@ -105,7 +106,7 @@ def status():
             cam.append(data)
     listlencam = len(cam)
     return render_template('camaras.html', titulo="SFIS", camaralist=cam, ncam=listlencam)
-
+# Estado de camara con respecto a 
 @app.route('/estadodecamara/estado/<data>', methods=['GET', 'POST'])
 def estadolistacamara(data):
     idcam = ""
@@ -116,16 +117,16 @@ def estadolistacamara(data):
     try:
         urlstatusray = app.config['STATUSRAY'] + 'WEB_' + id + '/status'
         r = requests.get(urlstatusray)
-        data = r.json()
+        data = r.json() 
         inf  = data['Information']
         scam = inf['STATUS_CAMERA']
         sser = inf['STATUS_SERVER_ML']
         strg = inf['STATUS_TEST']
         return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
-                               camarastreaming=strg, idcam=idcam)
+                               camarastreaming=strg, idcam=idcam, dataid=id)
     except:
         return render_template("indicadorcam.html", camaraestado=scam,camaraml=sser,
-                               camarastreaming=strg, idcam=idcam)
+                               camarastreaming=strg, idcam=idcam, dataid=id)
 
 @app.route('/video_feed/<id>', methods=['GET', 'POST'])
 def streamingvideo_feed(id):
@@ -139,7 +140,71 @@ def streamingtest(id):
     resp = requests.get(url, stream=True).raw
     return Response(resp, mimetype='image/png')
 
-# [streaming] funciones de gestión de streaming de video con el servicio de camaras.
+# [Status Serve]
+@app.route('/estadoserve', methods=['GET','POST'])
+def statusserver():
+    url_db_ElasticSearch = [app.config['SERVELASTICSEARCH'], "ElasticSearch"]
+    url_Ray = [app.config['SERVERAY'], "Ray"]
+    url_BentoML = [app.config['SERVEBENTOML'], "Bento"]
+    status = {"Ray":"Off", "Bento":"Off", "ElasticSearch":"Off"}
+    serve = [url_Ray, url_BentoML, url_db_ElasticSearch]    
+    for url, machine in serve:
+        try:
+            respserve = urllib.request.urlopen(url)
+        except urllib.error.HTTPError as r:
+            pass
+        except urllib.error.URLError:
+            pass
+        else:
+            status[machine] = "On"
+    return status
+# [Servicios]
+@app.route('/servicios', methods=['POST'])
+def cservicios():
+    RESP=''
+    estado = statusserver() 
+    data = request.form.to_dict()
+    print(data, estado)
+    status = data['status']
+    if status == '1':
+        try:
+            if   estado['Ray']=='Off':
+                command = 'ray start --head && serve start'
+                check_output(command, shell=True).decode('utf-8')
+                RESP = 'SERVICIO DE CAMARAS ACTIVADO'
+            else:
+                command = 'ray stop --force'
+                check_output(command, shell=True).decode('utf-8')
+                RESP = 'SERVICIO DE CAMARA APAGADO'
+        except:
+            RESP = 'REVISAR SERVICIO DE CAMARAS'
+    if status == '2':
+        try: 
+            if estado['Bento']=='Off':
+                command = 'sudo docker run -d --gpus all --network="host" -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 servicioml --workers 6'
+                check_output(command, shell=True).decode('utf-8')
+                RESP='SERVICIO DE ANALITICA ACTIVADO'
+            else:
+                command = 'sudo killall bentoml' 
+                check_output(command, shell=True).decode('utf-8')
+                RESP = 'SERVICIO DE ANALITICA APAGADO'
+        except:
+            RESP = 'REVISE SERVIDOR DE ANALITICA'
+    if status == '0':
+        try:
+            if   estado['ElasticSearch']=='Off':
+                command = 'sudo systemctl start elasticsearch'
+                check_output(command, shell=True).decode('utf-8')
+                RESP = 'SERVICIO DE ALMACENAMIENTO ACTIVO'
+            else:
+                command = 'sudo systemctl stop elasticsearch'
+                check_output(command, shell=True).decode('utf-8')
+                RESP='SEVICIO DE ALMACENAMIENTO APAGADO'
+        except:
+           RESP='REVISAR SERVICIO DE ALMACENAMIENTO' 
+
+    return RESP
+# [Streaming] funciones de gestión de streaming de video con el servicio de camaras.
 versetid=""
 @app.route('/activar/<setid>/<status>')
 def activarstreaming(setid, status):
@@ -380,7 +445,6 @@ def tcamara():
 
 @app.route('/guardarcamara',methods=['POST'])
 def gcamara():
-
     if request.method == 'POST':
         data = request.form.to_dict()
         print(data)
@@ -463,7 +527,6 @@ def initserver():
             command = 'ray stop --force'
             check_output(args=command, shell=True).decode('utf-8')
             DATA = 'SERVER STOPPED'
-
     return DATA
 
 @app.route('/pruebafiltro',methods=['GET','POST'])
