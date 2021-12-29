@@ -46,7 +46,7 @@ from utils.functions import *
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 server=app.config['SERVERML']
-
+passw=app.config['PASSW']
 #print(server)
 """
 INCIAL ESTRUCTURES
@@ -169,7 +169,7 @@ def cservicios():
     if status == '1':
         try:
             if   estado['Ray']=='Off':
-                command = 'ray start --head && serve start'
+                command =  'echo '+passw+' | sudo -S ray start --head && sudo serve start'
                 check_output(command, shell=True).decode('utf-8')
                 RESP = 'SERVICIO DE CAMARAS ACTIVADO'
             else:
@@ -181,11 +181,11 @@ def cservicios():
     if status == '2':
         try: 
             if estado['Bento']=='Off':
-                command = 'sudo docker run -d --gpus all --network="host" -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 servicioml --workers 6'
+                command = 'echo '+passw+' | sudo -S docker run -d --gpus all --network="host" -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 servicioml --workers 6'
                 check_output(command, shell=True).decode('utf-8')
                 RESP='SERVICIO DE ANALITICA ACTIVADO'
             else:
-                command = 'sudo killall bentoml' 
+                command = 'echo '+passw+' | sudo -S killall bentoml' 
                 check_output(command, shell=True).decode('utf-8')
                 RESP = 'SERVICIO DE ANALITICA APAGADO'
         except:
@@ -193,11 +193,11 @@ def cservicios():
     if status == '0':
         try:
             if   estado['ElasticSearch']=='Off':
-                command = 'sudo systemctl start elasticsearch'
+                command = 'echo '+passw+' | sudo -S systemctl start elasticsearch'
                 check_output(command, shell=True).decode('utf-8')
                 RESP = 'SERVICIO DE ALMACENAMIENTO ACTIVO'
             else:
-                command = 'sudo systemctl stop elasticsearch'
+                command ='echo '+passw+' | sudo -S systemctl stop elasticsearch'
                 check_output(command, shell=True).decode('utf-8')
                 RESP='SEVICIO DE ALMACENAMIENTO APAGADO'
         except:
@@ -423,7 +423,7 @@ def updatecamara():
         id= request.form['id']
         parametros=request.form['parametros']
         accion =request.form['accion']
-        data=activar(server,id,db,parametros,accion)
+        data=activar(passw,server,id,db,parametros,accion)
         return str(data)
 
 @app.route('/activarcamara',methods=['POST'])
@@ -433,7 +433,7 @@ def activarcamara():
         parametros=request.form['parametros']
         accion =request.form['accion']
         #print(parametros)
-        data=activar(server,id,db,parametros,accion)
+        data=activar(passw,server,id,db,parametros,accion)
         return str(data)
 
 @app.route('/testcamara',methods=['POST'])

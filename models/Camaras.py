@@ -83,7 +83,7 @@ def testcamara(id,db):
     return str(ret)
 
 
-def activar(server,id,db,parametros,accion):
+def activar(passw,server,id,db,parametros,accion):
     parametros=parametros.split("&")
     dictp={}
     for p in parametros:
@@ -162,10 +162,10 @@ def activar(server,id,db,parametros,accion):
     
     try:
         if  "add" in action:            
-            commandadd = 'python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --add '+str(True)
+            commandadd = 'echo '+passw+' | sudo -S python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --add '+str(True)
             DATA = check_output(commandadd, shell=True).decode('utf-8')
         elif "remove" in action:
-            commandadd = 'python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --remove '+str(True)
+            commandadd = 'echo '+passw+' | sudo -S python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --remove '+str(True)
             DATA = check_output(commandadd, shell=True).decode('utf-8')
     except:
         DATA = 'CHECK SERVER'
@@ -174,5 +174,4 @@ def activar(server,id,db,parametros,accion):
     return DATA#resp  
 
     
-
 
