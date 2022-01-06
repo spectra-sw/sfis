@@ -322,39 +322,48 @@ def activityd2(id):
     global registros2
     return render_template('cardactivity2.html', dato=registros2[int(id)])
 
-@app.route('/activity/get',methods=['GET'])
-def activity():
+@app.route('/activity/get/<tipo>/<query>',methods=['GET'])
+def activity(tipo,query):
     global registros
     global min
-    registros=pruebafiltro()
-    #print(registros)
-    for r in registros:
-        if r['title_authorization']==False:
-            r['clase'] = "table-danger"
-        if r['title_authorization']==True:
-            r['clase'] = "table-success"
+    alerta = []
+    try:
+        registros=pruebafiltro(tipo)
+        for r in registros:
+            print(r)
+            if r['title_authorization']==False:
+                r['clase'] = "table-danger"
+            if r['title_authorization']==True:
+                r['clase'] = "table-success"
+            zona = getZonaCamara(r['title_idcam'],db)
+            r['zona'] = zona.upper()
+            r['foto'] = r['title_face_uuid']
+            r['env'] = r['title_imagen_uuid']
+            #print(r['foto'])
+            #print(registros)
+            if query == '1' or query =='2':
+                alerta.append(r)
+            if query == '3':
+                getZona_Camara = getInfCamara(r['title_idcam'],db)[0] 
+                id_Visitante = getDatosVisitante("CC",r['title_identy'],db)[0]
+                ingreso_Destino = getDatosIngreso(id_Visitante,db)[3].upper()
+                print(ingreso_Destino, getZona_Camara)
+                if ingreso_Destino != getZona_Camara:
+                    alerta.append(r)
+    except:
+        print('Error acceso servicio a db')
 
-        zona = getZonaCamara(r['title_idcam'],db)
-        r['zona'] = zona
-        r['foto'] = r['title_face_uuid']
-        r['env'] = r['title_imagen_uuid']
-        #print(r['foto'])
-        '''
-        filePhoto= 'static/activity/'+ r['title_uuid']+'.jpg'
-        r['foto'] = r['title_uuid']+'.jpg'
-        #jpg_original = base64.b64decode(r['title_imagen'])
-        with open(filePhoto, 'wb') as f_output:
-            f_output.write(jpg_original)
-        '''
-    #print(registros)
-
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
-    DATA = check_output(commandadd, shell=True).decode('utf-8')
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
-    DATA = check_output(commandadd, shell=True).decode('utf-8')
-    print("Imagenes copiadas")
+    try:
+        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+        DATA = check_output(commandadd, shell=True).decode('utf-8')
+        print("Imagenes copiadas")
+    except:
+        print("Imagenes en espera")
     #Thread(target=copyImages,daemon=True).start()
-    return render_template('registros.html', registros= registros)
+    #  return render_template('registros.html', registros= registros)
+    return render_template('registros.html', registros= alerta)
 
 @app.route('/faces/get',methods=['GET'])
 def faces():
@@ -473,28 +482,25 @@ def registroRemoto(datos):
     imgli = datos['imgli']
     IMG = [imgf, imgld, imgli]
     idc = "XXXXX"
-    config = { "idc": idc , "thr": 0.85, "size": 12, "name": nombre, "CC": cc, "Access": access, "host": host,
-    "port": port, "indexwrite": indexwrite, "thrcw":0.0, "thrch":0.0}
+    config = { "idc": idc , "thr": 0.85, "size": 40, "name": nombre, "CC": cc, "Access": access, "host": host,
+    "port": port, "indexwrite": indexwrite, "thrcw":90.0, "thrch":90.0}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
     for urlimg in IMG:
         FRAME = cv2.imread(urlimg) # Remplazar por FRAME DEl VIDEO
         img = cv2.imencode('.jpg', FRAME)[1].tobytes()
         #DATA_> Estructura de datos.
-        datas = FormData()
-        datas.add_field('image', img, filename='image.jpg', content_type= 'image/jpg')
-        datas.add_field('annotations', json_config, filename='annotations.json', content_type='application/json')
-        #SEND_> Solicitud Asincrona.
-        loop = asyncio.new_event_loop()
+        files={
+            "image":("image.jpg",img),
+            "annotations":("annotations.json",json_config)
+        }
         try:
-            asyncio.set_event_loop(loop)
-            task = querysyncro(urlregitro, datas)
-            resp = loop.run_until_complete(task)
-            assert resp['_shards']['successful'] == 1
+            DATA=requests.post(url=urlregitro, files=files)
+            DATA=DATA.json()
+        #assert DATA["_shards"]["successfull"]==1
+            print(DATA)
         except:
-            print("Error al hacer registro")
-        finally:
-            loop.close()
+            print("Error en alguno de los registros")
 
 @app.route('/server',methods=['POST'])
 def initserver():
@@ -529,8 +535,8 @@ def initserver():
             DATA = 'SERVER STOPPED'
     return DATA
 
-@app.route('/pruebafiltro',methods=['GET','POST'])
-def pruebafiltro():
+@app.route('/pruebafiltro/<tipo>',methods=['GET','POST'])
+def pruebafiltro(tipo):
 
     async def querysyncro(urls, files):
         connector = aiohttp.TCPConnector()
@@ -566,7 +572,7 @@ def pruebafiltro():
     fmax = fmax[0:10]+"T"+fmax[11:]+"Z"
     print("Max"+fmax)
 
-    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 20, "search":"FECHA"}
+    config = {"host": host, "port": port, "indexread": indexread, "fmin": fmin, "fmax": fmax ,"sizedataread": 1000, "search":tipo}
     json_config = json.dumps(config).encode('utf-8')
     #FRAME_> OpenCV.
 

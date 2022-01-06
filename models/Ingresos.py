@@ -10,3 +10,13 @@ def registroIngreso(datos,db):
     print(query)
     sql = text(query)
     result = db.engine.execute(sql)
+
+def getDatosIngreso(id,db):
+    query ="select * from ingresos where id ='"+str(id)+"' order by fecha desc limit 1"
+    sql = text(query)
+    result = db.engine.execute(sql)
+    
+    for row in result:
+        datos=row
+    
+    return datos

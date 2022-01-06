@@ -1,4 +1,4 @@
-<table class="table table-bordered table-sm">
+<table class="table table-bordered table-sm table-hover" style="overflow:none">
 <thead>
     <tr class="table-warning">
         <th>Fecha</th>
@@ -19,9 +19,10 @@
         {% else %}
         <td>{{registro['title_score']}}</td>
         {% endif %}
-        <td><button class="btn btn-primary btn-sm"  id ="{{loop.index0 }}" onclick="detalleA(this.id)" > <i class="fa fa-fw fa-bookmark"></i></button></td>
+        <td><button class="btn btn-primary btn-sm"  id ="{{loop.index0 }}" onclick="detalleA(this.id)" style="height:20px;padding:1px;font-weight:bold;font-size:12px">Detalle</button></td>
         </td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+

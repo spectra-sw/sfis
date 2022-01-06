@@ -16,7 +16,7 @@ import cv2
 nest_asyncio.apply()
 
 def getCamaraById(id,db):
-    query ="select * from camaras where id ="+id
+    query ="select * from camaras where id ='"+id+"'"
     sql = text(query)
     result = db.engine.execute(sql)
     camara=[]
@@ -26,6 +26,16 @@ def getCamaraById(id,db):
 
     #print(camara)
     return camara    
+
+def getInfCamara(uuid,db):
+    query ="select id_zona from camaras where uuid ='"+uuid+"'"
+    sql = text(query)
+    result = db.engine.execute(sql)
+    Camara = [] 
+    #print(result)
+    for row in result:
+        Camara.append(row[0]) 
+    return Camara
 
 def getZonaCamara(uuid,db):
     query ="select nombre from camaras where uuid ='"+uuid+"'"

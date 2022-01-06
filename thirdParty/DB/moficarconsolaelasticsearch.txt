@@ -1,0 +1,16 @@
+------------Actualizar campo a keyword cuando existe una base de datos-----
+curl -XPUT "http://localhost:9200/activity/_mapping" \
+-H 'Content-Type: application/json' \
+-d'{
+  "properties": {
+    "title_idcam": {
+       "type": "text",
+       "fielddata": true 
+    }
+  }
+}'
+-----Esta estructura sirve para cualquiertipo de comando que que ser quiera enviar a elasticsearch-----
+curl -XPUT "http://localhost:9200/activity/_mapping" \
+-H 'Content-Type: application/json' \
+-d'<comando>'
+

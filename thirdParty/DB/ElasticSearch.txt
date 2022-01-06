@@ -1,0 +1,25 @@
+# ElasticSearch
+git clone --branch BentoML http://github.com/spectra-sw/face-detection.git
+## Instalación:
+
+1. Descargamos Elastic del siguiente link: https://www.elastic.co/es/downloads/elasticsearch opción **LINUX_X86_64**.
+2. En consola: `sudo dpkg -i ruta-del-archivo-.deb-deacargado`.
+3. Inicia automaticamente pero algunas instrucciones de gestión:
+   1. archivo de configuración: `sudo nano /etc/elasticsearch/elasticsearch.yml`.
+   2. Iniciar servicio: `sudo systemctl start elasticsearch`.
+   3. Detener servicio: `sudo systemctl stop elasticsearch`.
+   4. Iniciar servicio automaticamente cuando se apague o reinicie el servidor: `sudo systemctl enable elasticsearch`.
+   5. Reiniciar servicio: `sudo systemctl restart elasticsearch`.
+4. **Nota** Se puede instalar *Kibana* para Dashboard de visualización: https://www.elastic.co/es/downloads/kibana opción **DEB 64-BIT** port **5601**.
+5. Por defecto la DB se levanta por **localhost** con puerto **9200**.
+## ElasticSearch para DeepFace.
+6. Verificar si esta activo elasticsearch:
+   curl -X GET 'http://localhost:9200/'
+7. Index:
+   curl -X GET 'http://localhost:9200/_aliases?pretty=true'
+8. Ver indices:   
+   curl -X GET 'http://localhost:9200/_cat/indices?v'
+9. Si Elasticsearch no inicia ejecutar:
+   sudo /bin/systemctl daemon-reload
+   sudo /bin/systemctl enable elasticsearch.service
+

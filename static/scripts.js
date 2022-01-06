@@ -1,12 +1,31 @@
-function menu(){
-    window.open('/menu','_self');
+function menu(){ window.open('/menu','_self');
 }
 function inicio(){
     window.open('/inicio','_self');
 }
-function iniciar(){
+
+var alertIntervalInit
+function iniciarAlerta(tipo,query) {
+   alertIntervalInit = setInterval(function() {
+      iniciar(tipo,query) 
+   },5000); 
+}
+
+function onoffAlert(tipo,query) {
+    clearInterval(alertIntervalInit);
+    iniciarAlerta(tipo, query);
+    if       (query == 1) {
+       $('#titlequery').text('INSPECCIÓN');
+    }else if (query == 2) {
+       $('#titlequery').text('DETECCIÓN');
+    }else if (query == 3) {
+       $('#titlequery').text('RUTA');
+    }
+}
+
+function iniciar(tipo,query){
   
-        url = '/activity/get'
+        url = '/activity/get/'+tipo+'/'+query
         $.ajax({
                 url: url,
                 type:'GET',
