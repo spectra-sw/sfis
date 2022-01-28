@@ -26,6 +26,7 @@ from datetime import datetime
 from faker import Faker
 #import requests
 import uuid
+import shortuuid
 import aiohttp
 import asyncio
 import nest_asyncio
@@ -51,6 +52,7 @@ passw=app.config['PASSW']
 """
 INCIAL ESTRUCTURES
 """
+dockernamecamera = ""
 registros=[]
 registros2=[]
 db = SQLAlchemy(app)
@@ -169,11 +171,24 @@ def cservicios():
     if status == '1':
         try:
             if   estado['Ray']=='Off':
-                command =  'echo '+passw+' | sudo -S ray start --head && sudo serve start'
+                global dockernamecamera 
+                dockernamecamera = shortuuid.uuid()
+                command =  f'echo {passw} | sudo -S docker run -d --network="host" -t -i --name {dockernamecamera} servicecam:1.0.0 ./init.sh'
                 check_output(command, shell=True).decode('utf-8')
                 RESP = 'SERVICIO DE CAMARAS ACTIVADO'
             else:
-                command = 'ray stop --force'
+                dockerinf = f'echo {passw} | sudo -S docker ps -f ancestor=servicecam:1.0.0'
+                dockerinf = check_output(dockerinf, shell=True).decode('utf-8')
+                init = dockerinf.split('\n')[1]
+                init = init.split(' ')
+                dataname = []
+                for i in init:
+                    if i not in '':
+                        dataname.append(i)
+                n = len(dataname)
+                names = dataname[n-1]
+                #  command = f'echo {passw} | sudo -S docker container stop {dockernamecamera}'
+                command = f'echo {passw} | sudo -S docker container stop {names}'
                 check_output(command, shell=True).decode('utf-8')
                 RESP = 'SERVICIO DE CAMARA APAGADO'
         except:
@@ -301,9 +316,9 @@ def monitor():
 def actividad():
     camaras = getCamaras(db)
     print(camaras)
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+    commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
-    commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+    commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
     DATA = check_output(commandadd, shell=True).decode('utf-8')
     return render_template('actividad.html', titulo="SFIS",camaras=camaras)
 
@@ -354,9 +369,9 @@ def activity(tipo,query):
         print('Error acceso servicio a db')
 
     try:
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+        commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+        commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
         print("Imagenes copiadas")
     except:
@@ -664,8 +679,8 @@ def buscaract():
 if __name__=="__main__":
     #print(app.config)
     if app.config['ENV'] != "dev":
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
+        commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/activity/_data/. static/activity/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-        commandadd = 'sudo cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
+        commandadd = f'echo {passw} | sudo -S cp -Ru /var/lib/docker/volumes/environment/_data/. static/environment/'
         DATA = check_output(commandadd, shell=True).decode('utf-8')
-    app.run(host=app.config['HOST'],port=app.config['PORT'], threaded=True)
+    app.run(host=app.config['HOST'],port=app.config['PORT'])

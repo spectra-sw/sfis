@@ -1,0 +1,9 @@
+Run doc -> Dockerfile
+0. A Nivel:
+    $ sudo docker build -t <nombreimagen> .
+    $ sudo docker build -t servicecam:1.0.0 .
+
+    
+
+
+    

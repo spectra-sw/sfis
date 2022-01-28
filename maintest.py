@@ -14,7 +14,7 @@ def index():
     return render_template('test.html')
 
 def gen():
-    while True:
+   while True:
         frame = get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')

@@ -1,0 +1,126 @@
+### Dependencias:
+    - onnxruntime-gpu
+    - onnx
+    sin GPU
+    - onnxruntime
+    - onnx
+### En @env() en BentoMl:
+    @bentoml.env(
+    infer_pip_packages=True, conda_overwrite_channels=False, 
+    pip_packages=['onnxruntime-gpu==1.9.0','pillow','imageio','numpy','elasticsearch','imutils'],
+   		)
+### GPU y CUDA en Docker para BentoML
+0. Si existe DOCKER se debe eliminar:
+   $ sudo apt-get purge docker-ce docker-ce-cli containerd.io
+   $ sudo rm -rf /var/lib/docker
+   $ sudo rm -rf /var/lib/containerd
+1. $ curl https://get.docker.com | sh \
+   && sudo systemctl --now enable docker
+   Nota: Si sale error reintentar en 30 seg.
+2. $ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+3. curl -s -L https://nvidia.github.io/nvidia-container-runtime/experimental/$distribution/nvidia-container-runtime.list | sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
+4. sudo apt-get update
+5. sudo apt-get install -y nvidia-docker2
+6. sudo systemctl restart docker
+7. Montar la version de CUDA que se tenga instalada
+   v: nvidia/cuda:11.4.2-cudnn8-devel-ubuntu20.04
+   v: nvidia/cuda:11.3.0-cudnn8-devel-ubuntu20.04
+   v: nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04
+   remplaza <v> con version de imagen de CUDA descargada:
+   Ej. sudo docker run --rm --gpus all <v> nvidia-smi
+   Resultado - Ej:
+	+-----------------------------------------------------------------------------+
+	| NVIDIA-SMI 450.51.06    Driver Version: 450.51.06    CUDA Version: 11.0     |
+	|-------------------------------+----------------------+----------------------+
+	| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+	| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+	|                               |                      |               MIG M. |
+	|===============================+======================+======================|
+	|   0  Tesla T4            On   | 00000000:00:1E.0 Off |                    0 |
+	| N/A   34C    P8     9W /  70W |      0MiB / 15109MiB |      0%      Default |
+	|                               |                      |                  N/A |
+	+-------------------------------+----------------------+----------------------+
+
+	+-----------------------------------------------------------------------------+
+	| Processes:                                                                  |
+	|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+	|        ID   ID                                                   Usage      |
+	|=============================================================================|
+	|  No running processes found                                                 |
+	+-----------------------------------------------------------------------------+
+### MONTAJE DE BENTOML A DOCKER
+1. Verificar la version de BentoML: 
+	$python3
+	>>>import bentoml
+	>>>bentoml.__version__
+	'0.13.1'
+2. Buscar la imagen model/server para GPU en BentoML en:
+   https://hub.docker.com/r/bentoml/model-server/tags?page=1&ordering=last_updated
+   buscando la version de la version de Bento instalada:
+   	Ej: bentoml/model-server:0.13.1-py38-gpu
+3. Cuando creamos el server de BENTOML genera:
+   Ej: '/home/ossun/bentoml/repository/FaceOnnx/20211007155906_A46777'
+   que es la ruta donde esta guardado el servidor. ingresamos y buscamos lo siguientes archivos:
+     A. **bentoml.yml** -> Modificamos cambiamos el nombre del bentoml/model-server en "docker_base_image" a:
+        		    Ej:docker_base_image: bentoml/model-server:0.13.1-py38-gpu
+     B. **Dockerfile**  -> Modificar linea -> FROM bentoml/model-server:0.13.1-py38 a FROM bentoml/model-server:0.13.1-py38-gpu
+                        -> Modificar linea -> USER bentoml a USER root
+                        -> Para Colombia, despues de la linea "EXPOSE 5000" escribir, Ej:
+                           #Zonatime
+		                   RUN echo "America/New_York" > /etc/timezone
+     C.**FaceOnnx/bentoml.yml** -> modificamos cambiamos el nombre del bentoml/model-server en "docker_base_image".
+        			     Ej: docker_base_image: bentoml/model-server:0.13.1-py38-gpu
+     D. Si se muestra el siguiente error? "ImportError: libGL.so.1: cannot open shared object file: No such file or directory"
+        verificiar en '/home/ossun/bentoml/repository/FaceOnnx/<nameserver>' el archivo requirements.txt si existe 
+        Ej: "opencv-python-headless==4.5.3.56", si existe "python-opencv" cambiarlo por "opencv-python-headless==<version>".
+4. Creamos el contenerdor:
+   Recordemos que nombre de la clase de la API en la implemteción:
+   Ej: class FaceOnnx(bentoml.BentoService) -> el nombre es "FaceOnnx"
+   montamos el contenedor y dependencias:  
+   -> saved_path=$(bentoml get <nameapi>:latest --print-location --quiet) && sudo docker build -t <nameimage> $saved_path
+   Modificamos el nombre de la API en <nameapi> y el nombre que deseamos que tenga la imagen DOCKER la aplicación:
+   **CMD**: 
+       saved_path=$(bentoml get FaceOnnx:latest --print-location --quiet) && sudo docker build -t servicioml $saved_path
+5. Creamos volumenes que almacenaran las imagenes de los rostros y ambientes. Se crea en /var/lib/docker/volumes/: 
+     $ docker volume create activity
+     $ docker volume create environment
+     Ver Volumen:
+     $ docker volume ls
+     Otras opciones:
+     $ docker volumen --help
+   para montar los volumenes en la linea de ejecucio de la imagen: 
+     -v environment:/var/opt/sfis/static/environment 
+     -v activity:/var/opt/sfis/static/activity
+   Son PUNTERO de ruta donde se enviaran los datos para ser almacenaje de imagenes u otros archivos
+   que son agregado al codigo del programa Ej: Guarda una imagen o un archivo.
+   Para la implementación, Ej:
+     </var/opt/sfis/static/environment>
+     </var/opt/sfis/static/activity>
+6. Ejecucion con GPU y montaje de volumenes:
+   Modificamos:
+   - <nameimage>  -> Nombre de la image a ejecutar.
+   - <numworkers> -> Nombre la cantidad de resplica o trabajos.
+   ->  sudo docker run --gpus all -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 <nameimage> --workers <numworkers>
+**
+### CMD TEST:
+sudo docker run --gpus all --network="host" -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 servicioml --workers 6
+**
+## CMD PRODUCCION: ejecutar con los flag -> --detach , -d (Run container in background and print container ID) despues de la instruccion run.
+sudo docker run -d --gpus all --network="host" -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity --device /dev/nvidia0 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidia-modeset --device /dev/nvidiactl -p 5000:5000 servicioml --workers 6
+**
+Nota: Todo lo que envie a los punteros de ruta como </var/opt/sfis/static/environment> y </var/opt/sfis/static/activity> sera almacenado en la ruta de donde DOCKER crea los volumenes por defecto en: /var/lib/docker/volumes/ se encuentra las carpeta de los volumenes. 
+------
+### Utilidades:
+0. Para acceder a la red de localhost se debe agregar:
+   --network="host" 
+   a la linea de ejecucion de la imagen.
+1. ELIMINAR IMAGEN DOCKER
+   $ docker images
+   $ docker rmi [REPOSITORY]:[TAG] --force
+   $ docker rmi -f [IMAGE ID]
+2. Borrar todas las imagenes de Docker
+   $ docker rmi -f $(docker images -a -q)
+   
+sudo docker run --gpus all -v environment:/var/opt/sfis/static/environment -v activity:/var/opt/sfis/static/activity -p 5000:5000 servicioml --workers 1

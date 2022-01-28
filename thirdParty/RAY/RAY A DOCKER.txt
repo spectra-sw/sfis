@@ -1,0 +1,70 @@
+RAY EN DOCKER
+Nota: https://hub.docker.com/r/rayproject/ray/tags
+### Buscar IMAGEN para GPU y PYTHON 3.8:
+1. Version de RAY para DOCKER:
+    Ej: TAG-> 1.9.2-py38-cpu
+    Ej: TAG-> 1.9.2-py38-gpu
+    
+2. En "Dockerfile" en "ARG VERSION=1.9.2-py38-cpu"
+   establecemos la version, para esta implementación 
+   1.9.2-py38-cpu.
+2.1. Ejecución de archivo dockerfile:
+    $ sudo docker build -t <nombreimagen> .
+    $ sudo docker build -t servicecam:1.0.0 .   
+3. Para corre la imagen:
+   A. CPU:
+	  Ej: sudo docker run --privileged --shm-size=<shm-size> -t -i <nombre:deimagen> <comando>
+	  donde <shm-size> es el limite de consumo de RAM ej: 512M, 2G, 5G o mayor	   
+	  ### CMD TEST:
+	   $ sudo docker run --network="host" -t -i servicecam:1.0.0 ./init.sh	  
+	  ### CMD PROD: 
+	   $ sudo docker run -d --network="host" -t -i servicecam:1.0.0 ./init.sh	
+   B: GPU:
+      Nota: Depende del soporte del la imagen de RAY, si es version GPU usar:
+	  ### CMD TEST:
+	   $ sudo docker run --network="host" -t -i --gpus all servicecam:1.0.0 ./init.sh
+	  ### CMD PROD:
+	   $ sudo docker run -d --network="host" -t -i --gpus all servicecam:1.0.0 ./init.sh
+
+3.1. Muestra todas las ejecuciones de las imagenes Docker en cada activación:
+
+     $ sudo docker ps -a
+     
+3.2.  Filtra los datos solo por nombre de la imagen docker:
+
+     $ sudo docker ps -f ancestor=<nombredeimagen> 
+     Ej:
+     $ sudo docker ps -f ancestor=servicecam:1.0.0
+	   
+4. Detener imagen:
+
+    $ sudo docker container stop <aliasdeimagen>
+	   
+    EN PYTHON Obtener nombre de imagen para detener imagen, <nombredeiamgen>, en este ejemplo es servicecam:1.0.0 :
+    
+    from subprocess import check_output
+    dockerinf = f'echo {passw} | sudo -S docker ps -f ancestor=<nombredeimagen>'
+    dockerinf = check_output(dockerinf, shell=True).decode('utf-8')
+    init = dockerinf.split('\n')[1]
+    init = init.split(' ')
+    dataname = []
+    for i in init:
+        if i not in '':
+            dataname.append(i)
+    n = len(dataname)
+    names = dataname[n-1]
+
+    command = f'echo {passw} | sudo -S docker container stop {names}'
+    check_output(command, shell=True).decode('utf-8')
+	     
+**
+PRODUCCION: ejecutar con los flag -> --detach , -d (Run container in background and print container ID) despues de la instruccion run.        
+**
+### Encabezado en aplicacion PYTHON:
+	'''
+	ray.init(address='auto', namespace='serve', ignore_reinit_error=True)
+	serve.start()
+	'''
+
+
+

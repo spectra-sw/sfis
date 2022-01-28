@@ -1,4 +1,5 @@
 from sqlalchemy import text
+import requests
 import argparse
 import json
 from flask import render_template, request
@@ -12,6 +13,7 @@ import shortuuid
 import base64
 from subprocess import check_output
 import cv2
+
 
 nest_asyncio.apply()
 
@@ -94,6 +96,7 @@ def testcamara(id,db):
 
 
 def activar(passw,server,id,db,parametros,accion):
+    DATA = []
     parametros=parametros.split("&")
     dictp={}
     for p in parametros:
@@ -110,78 +113,49 @@ def activar(passw,server,id,db,parametros,accion):
     camara = getCamaraById(id,db)
     #print(camara)
     
-    parser = argparse.ArgumentParser(description="Setting")
-    parser.add_argument('--id', type=str, default='')
-    parser.add_argument('--source', type=None, default=None)
-    parser.add_argument('--frame', type=int, default=10)
-    parser.add_argument('--urlservices', type=str, default='')
-    parser.add_argument('--timeml', type=float, default=1.0)
-    parser.add_argument('--indexread', type=str, default='facencoding')
-    parser.add_argument('--indexwrite', type=str, default='activity')
-    parser.add_argument('--namespace', type=str, default='serve')
-    parser.add_argument('--nreplica', type=int, default=1)
-    parser.add_argument('--address', type=str, default='auto')
-    parser.add_argument('--hostname', type=str, default='localhost')
-    parser.add_argument('--port', type=int, default=9200)
-    parser.add_argument('--sizeread', type=int, default=1)
-    parser.add_argument('--sizeface', type=int, default=25)
-    parser.add_argument('--thr', type=float, default=0.85)
-    parser.add_argument('--thrperson', type=float, default=50.0)
-    parser.add_argument('--thrminperson', type=float, default=40.0)
-    parser.add_argument('--remove', type=bool, default=False)
-    parser.add_argument('--add', type=bool, default=False)
-    args = parser.parse_args()
-    
-    
-    # json -----------------------------------------------------------------------------------
-    params = {"idc": camara[0][11],"timeml":dictp["timeml"], "frame":int(camara[0][4]) ,"thr": dictp["thr"], "sizeface": int(dictp["sizeface"]), "indexread": args.indexread,
-            "indexwrite": args.indexwrite, "host": args.hostname, "port": args.port,
-            "sizeread":1, "thrperson": dictp["thrperson"], "namespace": args.namespace,
-            "nreplica":1,
-            "thrminperson": dictp["thrminperson"], "cam": camara[0][8], 'uuid': camara[0][11],
-            "action" : action,
-            "thrcw":dictp["thrcw"], "thrch":dictp["thrch"]
-            }
-    print(params)
-
-
-    uid             = params['idc']
-    # CODE link Streaming
-    cam = params['cam']
+    cam = camara[0][8]
     cam = cam.encode('ascii')
     cam = base64.b64encode(cam)
     cam = cam.decode('ascii')
-    # -------------------
-    source          = cam
-    frame           = params['frame']
-    urlservices     = "http://127.0.0.1:5000/FACE_INTEGRATION"
-    timeml          = params['timeml']
-    indexread       = params['indexread']
-    indexwrite      = params['indexwrite']
-    namespace       = params['namespace']
-    nreplica        = params['nreplica']
-    address         = "auto"
-    hostname        = "localhost"
-    port            = params['port']
-    sizeread        = params['sizeread']
-    sizeface        = params['sizeface']
-    thr             = params['thr']
-    thrperson       = params['thrperson']
-    thrminperson    = params['thrminperson']
-    action          = params['action']
+    source = cam
     
+    idc = camara[0][11]
+    frame = camara[0][4]
+    urlservices = "http://127.0.0.1:5000/FACE_INTEGRATION"
+    timeml = dictp["timeml"]
+    indexread = "facencoding"
+    indexwrite = "activity"
+    namespace = "serve"
+    nreplica = 1
+    address = "auto"
+    hostname = "localhost"
+    port = 9200
+    sizeread = 1
+    sizeface = int(dictp["sizeface"])
+    thr = dictp["thr"]
+    thrperson = dictp["thrperson"]
+    thrminperson = dictp["thrminperson"]
+    thrcw = dictp["thrcw"]
+    thrch = dictp["thrch"]
+    action = action
+
+    params = {"idc":idc, "source": source, "frame": frame, "urlservices": urlservices, "timeml": timeml, "indexread": indexread, "indexwrite": indexwrite, "namespace": namespace, "nreplica": nreplica, "address": address, "hostname": hostname, "port": port, "sizeread": sizeread, "sizeface": sizeface, "thr": thr, "thrperson": thrperson,  "thrminperson": thrminperson, "thrcw": thrcw, "thrch": thrch, "resolution": 720}
+    # json -----------------------------------------------------------------------------------
+    urladd = "http://localhost:7543/camservice/active"
+    urlrem = "http://localhost:7543/camservice/deactive"
+    print(params)
+
     try:
-        if  "add" in action:            
-            commandadd = 'echo '+passw+' | sudo -S python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --add '+str(True)
-            DATA = check_output(commandadd, shell=True).decode('utf-8')
+        if  "add" in action:
+            resp = requests.post(url=urladd, json=params)
+            #  print(resp.text)
         elif "remove" in action:
-            commandadd = 'echo '+passw+' | sudo -S python3 ../Serveargument.py '+' --id '+uid+' --source '+source+' --frame '+str(frame)+' --urlservices '+urlservices+' --timeml '+str(timeml)+' --indexread '+indexread+' --indexwrite '+indexwrite+' --namespace '+namespace+' --nreplica '+str(nreplica)+' --address '+address+' --hostname '+hostname+' --port '+str(port)+' --sizeread '+str(sizeread)+' --sizeface '+str(sizeface)+' --thr '+str(thr)+' --thrperson '+str(thrperson)+' --thrminperson '+str(thrminperson)+' --remove '+str(True)
-            DATA = check_output(commandadd, shell=True).decode('utf-8')
+            resp = requests.post(url=urlrem, json=params)
+            #  print(resp.tex)
     except:
         DATA = 'CHECK SERVER'
     
-    print("DATA: ", DATA)
-    return DATA#resp  
+    return DATA # resp  
 
     
 

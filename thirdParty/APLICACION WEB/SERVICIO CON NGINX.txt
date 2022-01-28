@@ -1,0 +1,146 @@
+--< PREPARACIÓN >-
+1. Instalación:
+    $ sudo pip3 install gunicorn flask nginx
+    
+2. Movemos el directorio de la aplicación a "/var/www/" y lo renombramos como "application"  
+
+3. Creamos un directorio y le damos permisos:
+    $ sudo mkdir /var/www/application
+    $ cd /var/www/application
+    
+4, Change directory ownership and permissions:
+    $ sudo chown -R www-data:www-data /var/www/application/ 
+    $ sudo chmod 755 /var/www/application/ 
+    Nota: www-data:www-data se refiere al usuario:grupo.
+
+5. Verificar puertos de escucha:
+    $ sudo lsof -i -P -n | grep LISTEN
+
+--< APLICACIÓN >--
+1. Creamos un aplicación Flask Ej -> "main.py":   
+    from flask import Flask
+    app = Flask(__name__)
+    
+    @app.route("/")
+    def hello():
+        return "<h1 style='color:blue'>Hello There!</h1>"
+
+    if __name__ == "__main__":
+        app.run(host='127.0.0.1')
+        
+2. Abrimos el Firewall al port 5000:
+    $ sudo ufw allow 5000 
+      
+3. Probamos que se ejecute la aplicacion y esto esta comprobado saltar
+   este paso:   
+    $ python3 main.py   
+    
+4. Creamos el punto de entrada uWSGI al mismo nivel de "main.py" Ej -> "wsgi.py":   
+
+    from myproject import app
+    if __name__ == "__main__":
+        app.run()    
+        
+--< CONFIGURACIÓN DE GUNICORN >--
+1. Verificación de Gunicorn:
+    $ gunicorn --bind 0.0.0.0:5000 wsgi:app   
+    
+2. cree un archivo de unidad systemd .service que permitirá que el sistema init de Ubuntu inicie automáticamente Gunicorn y haga funcionar la aplicación de Flask cuando el servidor se cargue con -> sudo nano /etc/systemd/system/<nombre>.service, Ej:
+    $ sudo nano /etc/systemd/system/sfis.service
+    
+3. Editamos sfis.service:
+    [Unit]
+    Description=SFIS Project
+    After=network.target
+
+    [Service]
+    User=www-data
+    Group=www-data  
+    WorkingDirectory=/var/www/application/
+    ExecStart=gunicorn --workers 5 --bind unix:/var/www/application/sfis.sock -m 007 wsgi:app
+    
+    [Install]
+    WantedBy=multi-user.target
+    
+3.1. Solo ejecutable:
+    [Unit]  
+    Description= SFIS .py
+    After=network.target
+
+    [Service]
+    ExecStart=/usr/bin/mail_arranque.sh
+    Type=oneshot
+    RemainAfterExit=true
+
+    [Install]
+    WantedBy=default.target
+
+4. Verificamos el servicio sfis.service:  
+    $ sudo systemctl daemon-reload  
+    $ sudo systemctl start sfis
+    $ sudo systemctl enable sfis
+    $ sudo systemctl status sfis   
+    
+--< NGINX >--
+0. Instalación:
+    Eliminar completamente una instalación anterior:
+        $ sudo apt-get purge nginx nginx-common
+    $ sudo -s
+    $ nginx=stable # use nginx=development for latest development version
+    $ add-apt-repository ppa:nginx/$nginx
+    $ apt update
+    $ apt install nginx
+    
+1. Crear un archivo de bloque del servidor y lo editamos:
+    $ sudo nano /etc/nginx/sites-available/sfis
+       
+2. Editamos el bloque servidor sfis:
+    server {
+        listen 80;
+        server_name sfis www.sfis;
+
+        location / {
+            include proxy_params;
+            proxy_pass http://unix:/var/www/application/sfis.sock;
+        }
+    }    
+    
+2. Habilitamos la configuración del bloque servidor en Nginx:
+    $ sudo ln -s /etc/nginx/sites-available/sfis /etc/nginx/sites-enabled    
+    
+3. Verificación de errores:
+    $ sudo nginx -t
+
+    nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+    nginx: configuration file /etc/nginx/nginx.conf test is successful   
+       
+4. Sino indica ningun problema:
+    $ sudo systemctl restart nginx   
+    4.1. Si sale error " nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)" en "sudo systemctl status nginx":
+        $ sudo netstat -plant | grep 80
+        $ sudo systemctl stop apache2 && sudo /etc/init.d/apache2 stop
+        $ sudo systemctl restart nginx
+     
+5. Ajustamos las reglas de firewall:
+    $ sudo ufw allow 5000
+    $ sudo ufw allow 'Nginx Full'
+    5.1 Borrar un puerto:
+        $ sudo ufw delete allow 5000
+
+5.1. Reiniciar:
+    $ shutdown -r now
+
+6. Verificación:
+    sudo less /var/log/nginx/error.log -> verifica los registros de error de Nginx.
+    sudo less /var/log/nginx/access.log -> verifica los registros de acceso de Nginx.
+    sudo journalctl -u nginx -> verifica los registros de proceso de Nginx.
+    sudo journalctl -u sfis -> verifica los registros de Gunicorn de su app de Flask.
+    
+7. Colocar dirección:
+    $ cat /etc/hosts
+   Agregamos:
+    IP DOMINIO Ej:
+        127.0.0.1 server.sfis.com
+
+8. Restauramos:
+    $ sudo nginx -s reload

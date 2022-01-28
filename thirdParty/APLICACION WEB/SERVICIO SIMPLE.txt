@@ -1,0 +1,60 @@
+1. Abrimos el Firewall al port 5000 o el puerto de uso:
+    $ sudo ufw allow <port> 
+      
+2. Probamos que se ejecute la aplicacion y esto esta comprobado saltar
+   este paso:   
+   
+    $ python3 main.py  
+    
+3. cree un archivo de unidad systemd .service que permitirá que el sistema init de Ubuntu inicie automáticamente la aplicación de Flask cuando el servidor se cargue con -> sudo nano /etc/systemd/system/<nombre>.service, 
+Ej:
+
+    $ sudo nano /etc/systemd/system/sfis.service
+    
+2. Editamos sfis.service, la aplicación esta en /home/<user>:
+
+    [Unit]
+    Description=SFIS Project
+    After=network.target
+
+    [Service]
+    User=root
+    Group=root  
+    WorkingDirectory=/home/admin-spectra/sfis
+    ExecStart=python3 main.py
+    
+    [Install]
+    WantedBy=multi-user.target
+    
+-------------------------------------------------
+Nota:
+    Como el usuario y el grupo es roo:root la ejecución se realiza como administrador.
+-------------------------------------------------
+
+2,1. Para ejecutar comandos como root con 'check_output' de 'subprocess' en PYTHON debemos usar:
+
+    $ echo <passwdeadminitrador> | sudo -S <lineadecoomando>
+    EJ:
+    $ echo 8603765ty | sudo -S python3 main.py
+    
+4. Verificamos el servicio sfis.service:  
+    $ sudo systemctl daemon-reload  
+    $ sudo systemctl start sfis
+    $ sudo systemctl enable sfis
+    $ sudo systemctl status sfis   
+    
+5. Reiniciar:
+
+    $ shutdown -r now
+
+6. Verificación:
+
+    sudo journalctl -u sfis -> verificar las ejecuciones del servicio.
+    
+7. Colocar dirección:
+    $ cat /etc/hosts
+   Agregamos:
+    IP DOMINIO Ej:
+        127.0.0.1 server.sfis.com
+
+

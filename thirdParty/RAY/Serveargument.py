@@ -162,7 +162,7 @@ class MANAGER:
             else:
                 self.CAMSTATUS = False              
             #DELAY
-            time.sleep(self.timeframe)
+            #time.sleep(self.timeframe)
     # THERAD calibracion
     def DRAWIMG(self, idc, url, params):
         count = 0
